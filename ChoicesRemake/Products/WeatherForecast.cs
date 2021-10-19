@@ -1,6 +1,6 @@
 using System;
 
-namespace ChoicesRemake
+namespace Products
 {
     public class WeatherForecast
     {

@@ -3,8 +3,8 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:43474",
-      "sslPort": 44365
+      "applicationUrl": "http://localhost:34520",
+      "sslPort": 44351
     }
   },
   "$schema": "http://json.schemastore.org/launchsettings.json",
@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "ChoicesRemake": {
+    "ExampleKafka2": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
