@@ -9,7 +9,7 @@ namespace ProductsDBLayer
 {
     public partial class ProductsDBContext : DbContext
     {
-        
+
 
         public ProductsDBContext(DbContextOptions<ProductsDBContext> options)
             : base(options)
@@ -25,7 +25,7 @@ namespace ProductsDBLayer
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<Size> Sizes { get; set; }
 
-        
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -39,12 +39,12 @@ namespace ProductsDBLayer
                 entity.ToTable("Category");
 
                 entity.Property(e => e.CatId)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
                     .HasColumnName("cat_id");
 
                 entity.Property(e => e.Value)
                     .IsRequired()
-                    .HasMaxLength(50)
+                    .HasMaxLength(512)
                     .IsUnicode(false)
                     .HasColumnName("value");
             });
@@ -54,7 +54,7 @@ namespace ProductsDBLayer
                 entity.ToTable("Color");
 
                 entity.Property(e => e.ColorId)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
                     .HasColumnName("color_id");
 
                 entity.Property(e => e.Value)
@@ -72,17 +72,16 @@ namespace ProductsDBLayer
                 entity.ToTable("Description");
 
                 entity.Property(e => e.DescId)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
                     .HasColumnName("desc_id");
 
                 entity.Property(e => e.LongDescription)
                     .IsRequired()
-                    .HasMaxLength(50)
                     .HasColumnName("long_description");
 
                 entity.Property(e => e.Title)
                     .IsRequired()
-                    .HasMaxLength(50)
+                    .HasMaxLength(4000)
                     .HasColumnName("title");
             });
 
@@ -91,16 +90,16 @@ namespace ProductsDBLayer
                 entity.ToTable("Image");
 
                 entity.Property(e => e.ImageId)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
                     .HasColumnName("image_id");
 
                 entity.Property(e => e.Location)
                     .IsRequired()
-                    .HasMaxLength(50)
+                    .HasMaxLength(512)
                     .HasColumnName("location");
 
                 entity.Property(e => e.MiniDesc)
-                    .HasMaxLength(50)
+                    .HasMaxLength(4000)
                     .HasColumnName("mini_desc");
 
                 entity.Property(e => e.Name)
@@ -114,7 +113,7 @@ namespace ProductsDBLayer
                 entity.ToTable("Mass");
 
                 entity.Property(e => e.MassId)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
                     .HasColumnName("mass_id");
 
                 entity.Property(e => e.MassInKg).HasColumnName("massInKg");
@@ -128,22 +127,22 @@ namespace ProductsDBLayer
                 entity.ToTable("Misc_Detail");
 
                 entity.Property(e => e.DetailId)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
                     .HasColumnName("detail_id");
 
                 entity.Property(e => e.Key)
-                    .HasMaxLength(50)
+                    .HasMaxLength(512)
                     .HasColumnName("key");
 
                 entity.Property(e => e.Value)
-                    .HasMaxLength(50)
+                    .HasMaxLength(1024)
                     .HasColumnName("value");
             });
 
             modelBuilder.Entity<Product>(entity =>
             {
                 entity.HasKey(e => new { e.ProdId, e.ImageId, e.SizeId, e.CatId, e.ColorId, e.MassId })
-                    .HasName("PK_5");
+                    .HasName("PK_69");
 
                 entity.ToTable("Product");
 
@@ -161,7 +160,7 @@ namespace ProductsDBLayer
 
                 entity.HasIndex(e => e.DetailId, "fkIdx_68");
 
-                entity.Property(e => e.ProdId).HasColumnName("prod_id");
+                entity.Property(e => e.ProdId).ValueGeneratedOnAdd().HasColumnName("prod_id");
 
                 entity.Property(e => e.ImageId).HasColumnName("image_id");
 
@@ -175,21 +174,21 @@ namespace ProductsDBLayer
 
                 entity.Property(e => e.Brand)
                     .IsRequired()
-                    .HasMaxLength(50)
+                    .HasMaxLength(512)
                     .HasColumnName("brand");
 
                 entity.Property(e => e.DescId).HasColumnName("desc_id");
 
                 entity.Property(e => e.Designer)
                     .IsRequired()
-                    .HasMaxLength(50)
+                    .HasMaxLength(512)
                     .HasColumnName("designer");
 
                 entity.Property(e => e.DetailId).HasColumnName("detail_id");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(50)
+                    .HasMaxLength(512)
                     .HasColumnName("name");
 
                 entity.Property(e => e.Price)
@@ -244,7 +243,7 @@ namespace ProductsDBLayer
                 entity.ToTable("Size");
 
                 entity.Property(e => e.SizeId)
-                    .ValueGeneratedNever()
+                    .ValueGeneratedOnAdd()
                     .HasColumnName("size_id");
 
                 entity.Property(e => e.HeightInMm).HasColumnName("HeightInMM");

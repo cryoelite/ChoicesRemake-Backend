@@ -21,10 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IProductsDB\IProductsDB.csproj" />
+    <ProjectReference Include="..\IProductsRepository\IProductsRepository.csproj" />
     <ProjectReference Include="..\ProductsDBLayer\ProductsDBLayer.csproj" />
-    <ProjectReference Include="..\ProductsDB\ProductsDB.csproj" />
     <ProjectReference Include="..\ProductsModel\ProductsModel.csproj" />
+    <ProjectReference Include="..\ProductsRepository\ProductsRepository.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,28 +1,18 @@
 -- ****************** SqlDBM: Microsoft SQL Server ******************
 -- ******************************************************************
 
--- ************************************** [dbo].[Mass]
-CREATE TABLE [dbo].[Mass]
-(
- [mass_id]  bigint NOT NULL ,
- [massInKg] float NULL ,
-
-
- CONSTRAINT [PK_12] PRIMARY KEY CLUSTERED ([mass_id] ASC)
-);
-GO
-
 -- ************************************** [dbo].[Category]
 CREATE TABLE [dbo].[Category]
 (
  [cat_id] bigint NOT NULL ,
- [value]  varchar(50) NOT NULL ,
+ [value]  varchar(512) NOT NULL ,
 
 
  CONSTRAINT [PK_38] PRIMARY KEY CLUSTERED ([cat_id] ASC)
 );
 GO
 
+-- ****************** SqlDBM: Microsoft SQL Server ******************
 -- ******************************************************************
 
 -- ************************************** [dbo].[Color]
@@ -36,47 +26,68 @@ CREATE TABLE [dbo].[Color]
 );
 GO
 
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
 
 -- ************************************** [dbo].[Description]
 CREATE TABLE [dbo].[Description]
 (
  [desc_id]          bigint NOT NULL ,
- [title]            nvarchar(50) NOT NULL ,
- [long_description] nvarchar(50) NOT NULL ,
+ [title]            nvarchar(4000) NOT NULL ,
+ [long_description] nvarchar(max) NOT NULL ,
 
 
  CONSTRAINT [PK_27] PRIMARY KEY CLUSTERED ([desc_id] ASC)
 );
 GO
 
+-- ****************** SqlDBM: Microsoft SQL Server ******************
 -- ******************************************************************
 
 -- ************************************** [dbo].[Image]
 CREATE TABLE [dbo].[Image]
 (
- [name]      nvarchar(50) NOT NULL ,
- [location]  nvarchar(50) NOT NULL ,
- [mini_desc] nvarchar(50) NULL ,
  [image_id]  bigint NOT NULL ,
+ [name]      nvarchar(50) NOT NULL ,
+ [location]  nvarchar(512) NOT NULL ,
+ [mini_desc] nvarchar(4000) NULL ,
 
 
  CONSTRAINT [PK_21] PRIMARY KEY CLUSTERED ([image_id] ASC)
 );
 GO
 
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
+
+-- ************************************** [dbo].[Mass]
+CREATE TABLE [dbo].[Mass]
+(
+ [mass_id]  bigint NOT NULL ,
+ [massInKg] float NULL ,
+
+
+ CONSTRAINT [PK_12] PRIMARY KEY CLUSTERED ([mass_id] ASC)
+);
+GO
+
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
 
 -- ************************************** [dbo].[Misc_Detail]
 CREATE TABLE [dbo].[Misc_Detail]
 (
  [detail_id] bigint NOT NULL ,
- [key]       nvarchar(50) NULL ,
- [value]     nvarchar(50) NULL ,
+ [key]       nvarchar(512) NULL ,
+ [value]     nvarchar(1024) NULL ,
 
 
  CONSTRAINT [PK_42] PRIMARY KEY CLUSTERED ([detail_id] ASC)
 );
 GO
 
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
 
 -- ************************************** [dbo].[Size]
 CREATE TABLE [dbo].[Size]
@@ -91,6 +102,9 @@ CREATE TABLE [dbo].[Size]
 );
 GO
 
+-- ****************** SqlDBM: Microsoft SQL Server ******************
+-- ******************************************************************
+
 -- ************************************** [dbo].[Product]
 CREATE TABLE [dbo].[Product]
 (
@@ -100,15 +114,15 @@ CREATE TABLE [dbo].[Product]
  [cat_id]    bigint NOT NULL ,
  [color_id]  bigint NOT NULL ,
  [mass_id]   bigint NOT NULL ,
- [name]      nvarchar(50) NOT NULL ,
- [brand]     nvarchar(50) NOT NULL ,
- [designer]  nvarchar(50) NOT NULL ,
+ [name]      nvarchar(512) NOT NULL ,
+ [brand]     nvarchar(512) NOT NULL ,
+ [designer]  nvarchar(512) NOT NULL ,
  [price]     money NOT NULL ,
  [desc_id]   bigint NOT NULL ,
  [detail_id] bigint NOT NULL ,
 
 
- CONSTRAINT [PK_5] PRIMARY KEY CLUSTERED ([prod_id] ASC, [image_id] ASC, [size_id] ASC, [cat_id] ASC, [color_id] ASC, [mass_id] ASC),
+ CONSTRAINT [PK_69] PRIMARY KEY CLUSTERED ([prod_id] ASC, [image_id] ASC, [size_id] ASC, [cat_id] ASC, [color_id] ASC, [mass_id] ASC),
  CONSTRAINT [FK_48] FOREIGN KEY ([image_id])  REFERENCES [dbo].[Image]([image_id]),
  CONSTRAINT [FK_51] FOREIGN KEY ([desc_id])  REFERENCES [dbo].[Description]([desc_id]),
  CONSTRAINT [FK_54] FOREIGN KEY ([size_id])  REFERENCES [dbo].[Size]([size_id]),
@@ -168,3 +182,6 @@ CREATE NONCLUSTERED INDEX [fkIdx_68] ON [dbo].[Product]
  )
 
 GO
+
+
+
