@@ -57,32 +57,26 @@ namespace ProductsRepository
 
         public async Task storeProduct(Product product, Category cat, Color color, Description desc, Image image, Mass mass, MiscDetail detail, Size size)
         {
-      /*      cat.Products.Add(product);
+            cat.Products.Add(product);
             color.Products.Add(product);
             image.Products.Add(product);
             mass.Products.Add(product);
             detail.Products.Add(product);
             size.Products.Add(product);
-            desc.Products.Add(product);*/
+            desc.Products.Add(product); 
 
-            await pdb.AddAsync(cat);
-            /*await pdb.AddAsync(color);
+             await pdb.AddAsync(cat);
+            await pdb.AddAsync(color);
             await pdb.AddAsync(image);
             await pdb.AddAsync(mass);
             await pdb.AddAsync(detail);
             await pdb.AddAsync(size);
             await pdb.AddAsync(desc);
 
-           
-             product.CatId = cat.CatId;
-            product.DescId = desc.DescId;
-            product.ImageId = image.ImageId;
-            product.ColorId = color.ColorId;
-            product.SizeId = size.SizeId;
-            product.MassId = mass.MassId;
-            product.DetailId = detail.DetailId;
 
-            await pdb.AddAsync(product);*/
+            
+
+            await pdb.AddAsync(product);
             await pdb.SaveChangesAsync();
         }
     }
