@@ -8,4 +8,10 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.11" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\IProductsDB\IProductsDB.csproj" />
+    <ProjectReference Include="..\ProductsDBLayer\ProductsDBLayer.csproj" />
+    <ProjectReference Include="..\ProductsModel\ProductsModel.csproj" />
+  </ItemGroup>
+
 </Project>

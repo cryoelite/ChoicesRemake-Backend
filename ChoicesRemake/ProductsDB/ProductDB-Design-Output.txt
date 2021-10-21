@@ -1,0 +1,30 @@
+Msg 2714, Level 16, State 6, Server sql1, Line 5
+There is already an object named 'Mass' in the database.
+Msg 2714, Level 16, State 6, Server sql1, Line 3
+There is already an object named 'Category' in the database.
+Msg 2714, Level 16, State 6, Server sql1, Line 5
+There is already an object named 'Color' in the database.
+Msg 2714, Level 16, State 6, Server sql1, Line 4
+There is already an object named 'Description' in the database.
+Msg 2714, Level 16, State 6, Server sql1, Line 5
+There is already an object named 'Image' in the database.
+Msg 2714, Level 16, State 6, Server sql1, Line 4
+There is already an object named 'Misc_Detail' in the database.
+Msg 2714, Level 16, State 6, Server sql1, Line 4
+There is already an object named 'Size' in the database.
+Msg 2714, Level 16, State 6, Server sql1, Line 3
+There is already an object named 'Product' in the database.
+Msg 1913, Level 16, State 1, Server sql1, Line 3
+The operation failed because an index or statistics with name 'fkIdx_50' already exists on table 'dbo.Product'.
+Msg 1913, Level 16, State 1, Server sql1, Line 2
+The operation failed because an index or statistics with name 'fkIdx_53' already exists on table 'dbo.Product'.
+Msg 1913, Level 16, State 1, Server sql1, Line 2
+The operation failed because an index or statistics with name 'fkIdx_56' already exists on table 'dbo.Product'.
+Msg 1913, Level 16, State 1, Server sql1, Line 2
+The operation failed because an index or statistics with name 'fkIdx_59' already exists on table 'dbo.Product'.
+Msg 1913, Level 16, State 1, Server sql1, Line 2
+The operation failed because an index or statistics with name 'fkIdx_62' already exists on table 'dbo.Product'.
+Msg 1913, Level 16, State 1, Server sql1, Line 2
+The operation failed because an index or statistics with name 'fkIdx_65' already exists on table 'dbo.Product'.
+Msg 1913, Level 16, State 1, Server sql1, Line 2
+The operation failed because an index or statistics with name 'fkIdx_68' already exists on table 'dbo.Product'.

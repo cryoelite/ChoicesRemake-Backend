@@ -1,50 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+
+#nullable disable
 
 namespace ProductsModel
 {
-    public class Product
+    public partial class Product
     {
-        [Key]
-        public int id { get; set; }
+        public long ProdId { get; set; }
+        public long ImageId { get; set; }
+        public long SizeId { get; set; }
+        public long CatId { get; set; }
+        public long ColorId { get; set; }
+        public long MassId { get; set; }
+        public string Name { get; set; }
+        public string Brand { get; set; }
+        public string Designer { get; set; }
+        public decimal Price { get; set; }
+        public long DescId { get; set; }
+        public long DetailId { get; set; }
 
-        [Required]
-        [MaxLength(256)]
-        public string name { get; set; }
-
-        [Required]
-        [MaxLength(256)]
-        public string brand { get; set; }
-
-        public string designer { get; set; }
-
-        [Required]
-        [Range(double.Epsilon, double.MaxValue)]
-        public double price { get; set; }
-
-        [Required]
-        public string localImageLocation { get; set; }
-
-        [Required]
-        public List<string> descriptions { get; set; }
-
-        [Required]
-        public string category { get; set; }
-
-        [Required]
-        public List<string> sub_categories { get; set; }
-
-        [Required]
-        public List<double> sizes { get; set; }
-
-        [Required]
-        public List<string> colors { get; set; }
-
-        [Required]
-        public List<double> masses { get; set; }
-
-        public Dictionary<string, string> misc_details {get;set;} 
-
+        public virtual Category Cat { get; set; }
+        public virtual Color Color { get; set; }
+        public virtual Description Desc { get; set; }
+        public virtual MiscDetail Detail { get; set; }
+        public virtual Image Image { get; set; }
+        public virtual Mass Mass { get; set; }
+        public virtual Size Size { get; set; }
     }
 }

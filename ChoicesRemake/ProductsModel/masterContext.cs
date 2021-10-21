@@ -1,17 +1,18 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using ProductsModel;
 
 #nullable disable
 
-namespace ProductsDBLayer
+namespace ProductsModel
 {
-    public partial class ProductsDBContext : DbContext
+    public partial class masterContext : DbContext
     {
-        
+        public masterContext()
+        {
+        }
 
-        public ProductsDBContext(DbContextOptions<ProductsDBContext> options)
+        public masterContext(DbContextOptions<masterContext> options)
             : base(options)
         {
         }
@@ -25,7 +26,14 @@ namespace ProductsDBLayer
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<Size> Sizes { get; set; }
 
-        
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Server=127.0.0.1;Database=master;User Id=SA;Password=Uxz5#2@1+7");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
