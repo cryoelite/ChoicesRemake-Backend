@@ -12,7 +12,7 @@ namespace IProductsRepository
 #nullable enable
         Task<Product?> getProductById(int id);
 #nullable disable        
-        Task<List<Product>> searchAndGetProductsByName(string name);
+        List<Product> searchAndGetProductsByName(string name);
         Task<List<Product>> searchAndGetProductsByPriceRange(decimal minPrice = decimal.MinValue, decimal maxPrice = decimal.MaxValue);
 
     }

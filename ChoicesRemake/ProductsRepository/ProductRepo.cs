@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using DiffMatchPatch;
 using IProductsRepository;
@@ -10,6 +11,8 @@ using ProductsModel;
 
 namespace ProductsRepository
 {
+
+
     public class ProductRepo : IProductRepo
     {
         ProductsDBContext pdb;
@@ -25,23 +28,28 @@ namespace ProductsRepository
             return product;
         }
 #nullable disable
-        public async Task<List<Product>> searchAndGetProductsByName(string name)
-        {
 
+
+
+        public List<Product> searchAndGetProductsByName(string name)
+        {
             var dmp = new diff_match_patch();
 
 
-            var products = await pdb.Products.AsNoTracking().Where(delegate (Product product)
+
+            var products =  pdb.Products.AsNoTracking().Where(delegate (Product product)
             {
+
                 var convName = name.Trim().ToLower().Replace(" ", "");
-                var convProdName = name.Trim().ToLower().Replace(" ", "");
+                var convProdName = product.Name.Trim().ToLower().Replace(" ", "");
                 var diff = dmp.diff_main(convName, convProdName);
                 var result = dmp.diff_levenshtein(diff);
 
                 double similarity = 100 - ((double)result / Math.Max(convName.Length, convProdName.Length) * 100);
                 return similarity >= 60;
 
-            }).AsQueryable().ToListAsync();
+            }).ToList();
+
 
 
             return products;
@@ -63,9 +71,9 @@ namespace ProductsRepository
             mass.Products.Add(product);
             detail.Products.Add(product);
             size.Products.Add(product);
-            desc.Products.Add(product); 
+            desc.Products.Add(product);
 
-             await pdb.AddAsync(cat);
+            await pdb.AddAsync(cat);
             await pdb.AddAsync(color);
             await pdb.AddAsync(image);
             await pdb.AddAsync(mass);
@@ -74,10 +82,11 @@ namespace ProductsRepository
             await pdb.AddAsync(desc);
 
 
-            
+
 
             await pdb.AddAsync(product);
             await pdb.SaveChangesAsync();
         }
     }
 }
+

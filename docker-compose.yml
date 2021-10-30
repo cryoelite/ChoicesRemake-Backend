@@ -1,11 +1,26 @@
----
-version: '2'
+version: "3.9"
 networks:
   default:
     external: true
     name: alphaLayer
     driver: bridge
 services:
+#  product:
+#    build: 
+#      context: ./ChoicesRemake/
+#      dockerfile: "/Products/Dockerfile"
+#    ports:
+#      - "8000:80"
+#      - "8001:443"
+#    depends_on:
+#      - db
+  db:
+    user: mssql
+    volumes:
+      - ./data:/var/opt/mssql/data
+    build: "/ChoicesRemake/ProductsDBLayer/"
+    ports:
+      - "1433:1433"
   zookeeper:
     image: confluentinc/cp-zookeeper:6.2.1
     hostname: zookeeper

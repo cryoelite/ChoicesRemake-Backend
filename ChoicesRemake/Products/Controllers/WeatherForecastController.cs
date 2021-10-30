@@ -8,6 +8,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using ProductsRepository;
 using ProductsModel;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Products.Controllers
 {
@@ -24,71 +26,72 @@ namespace Products.Controllers
         public async Task<IActionResult> Get()
         {
 
-            var product = new Product()
-            {
-                Brand = "IMPLEMENTS",
-                Name = "Standard Plate",
-                Designer = "Masanori Daiji",
-                Price = 4290,
-            };
+            /* var product = new Product()
+             {
+                 Brand = "IMPLEMENTS",
+                 Name = "Standard Plate",
+                 Designer = "Masanori Daiji",
+                 Price = 4290,
+             };
 
 
-            var cat = new Category()
-            {
-             
-                Value = "LivingWare",
+             var cat = new Category()
+             {
 
-            };
+                 Value = "LivingWare",
 
-            var color = new Color()
-            {
-          
-                Value = BaseColor.Blue,
-            };
+             };
 
-            var desc = new Description()
-            {
-             
-                Title = "xyz",
-                LongDescription = "Something"
-            };
+             var color = new Color()
+             {
 
-            var img = new Image()
-            {
-       
-                Location = "nooo",
-                MiniDesc = "yoo",
-                Name = "Standard Plate",
-            };
+                 Value = BaseColor.Blue,
+             };
 
-            var mass = new Mass()
-            {
-               
-                MassInKg = 0,
+             var desc = new Description()
+             {
+
+                 Title = "xyz",
+                 LongDescription = "Something"
+             };
+
+             var img = new Image()
+             {
+
+                 Location = "nooo",
+                 MiniDesc = "yoo",
+                 Name = "Standard Plate",
+             };
+
+             var mass = new Mass()
+             {
+
+                 MassInKg = 0,
 
 
-            };
+             };
 
-            var miscDetail = new MiscDetail()
-            {
-                
-                Key = "Remarks",
-                Value = "Yahoo",
+             var miscDetail = new MiscDetail()
+             {
 
-            };
+                 Key = "Remarks",
+                 Value = "Yahoo",
 
-            var size = new Size()
-            {
-               
-                WidthInMm = 200,
-                HeightInMm = 28,
-                LengthInMm = 0,
+             };
 
-            };
+             var size = new Size()
+             {
 
-            await productInterface.storeProduct(product, cat, color, desc, img, mass, miscDetail, size);
+                 WidthInMm = 200,
+                 HeightInMm = 28,
+                 LengthInMm = 0,
 
-            return new JsonResult(product.Name);
+             };
+
+             await productInterface.storeProduct(product, cat, color, desc, img, mass, miscDetail, size);*/
+            var product = productInterface.searchAndGetProductsByName("standard plate");
+            var jsonProduct = JsonSerializer.Serialize(product);
+            return Ok(jsonProduct);
         }
     }
 }
