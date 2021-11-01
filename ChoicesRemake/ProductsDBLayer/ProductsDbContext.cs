@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 using ProductsModel;
 
 #nullable disable
@@ -9,8 +7,6 @@ namespace ProductsDBLayer
 {
     public partial class ProductsDBContext : DbContext
     {
-
-
         public ProductsDBContext(DbContextOptions<ProductsDBContext> options)
             : base(options)
         {
@@ -24,8 +20,6 @@ namespace ProductsDBLayer
         public virtual DbSet<MiscDetail> MiscDetails { get; set; }
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<Size> Sizes { get; set; }
-
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

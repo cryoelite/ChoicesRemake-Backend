@@ -1,0 +1,12 @@
+{
+  "Authentication": {
+    "Jwt": {
+      "Issuer": "https://github.com/cryoelite",
+      "Secret": "a371d63b4dc51bfc77acfbccef6da4d13bc620ebfcc1d2e776d91cd103e73916",
+      "ExpirationInDays": 30,
+      "Algorithm": "HS256"
+    },
+    "connectionString": "Server=172.23.0.4; Database=master;User Id=SA;Password=Uxz5#2@1+7"
+
+  }
+}

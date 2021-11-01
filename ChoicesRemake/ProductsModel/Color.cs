@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 #nullable disable
 
 namespace ProductsModel
 {
-    public static class BaseColor {
+    public static class BaseColor
+    {
         public const string Blue = "blue";
         public const string Brown = "brown";
         public const string Red = "red";
@@ -17,13 +17,8 @@ namespace ProductsModel
         public const string Violet = "violet";
         public const string Indigo = "indigo";
         public const string Orange = "orange";
-
-
-
-
-
-
     }
+
     public partial class Color
     {
         public Color()
