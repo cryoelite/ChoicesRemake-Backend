@@ -17,7 +17,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Authentication.Controllers
-{ 
+{
     [ApiController]
     [Route("auth")]
     public class Authentication : ControllerBase
@@ -32,16 +32,84 @@ namespace Authentication.Controllers
         public Authentication(ILogger<Authentication> logger, UserManager<ApplicationUser> userManager, IOptions<JWTSettings> options)
             => (_logger, manager, jwtOptions) = (logger, userManager, options.Value);
 
+        [NonAction]
+        public async Task<ApplicationUser?> Register(ApplicationUser user)
+        {
 
+            var _user = new ApplicationUser()
+            {
+                UserName = user.Email,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                Surname = user.Surname,
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] ApplicationUser user)
+            };
+
+            var registerState = await manager.CreateAsync(_user, user.password);
+            if (registerState.Succeeded)
+            {
+                return _user;
+            }
+
+            return null;
+        }
+
+        [HttpPost("registerUser")]
+        public async Task<IActionResult> RegisterUser([FromBody] ApplicationUser user)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await Register(user);
+
+                if (result != null)
+                {
+                    Response.Headers.Add("Bearer-Token", GenerateJwt(result));
+                    return Created(string.Empty, string.Empty);
+                }
+
+                return Problem("Error in user creation", null, 500);
+
+            }
+
+            return BadRequest("User details provided incorrectly");
+        }
+
+        [HttpPost("registerAdmin")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] ApplicationUser user)
         {
             if (ModelState.IsValid)
             {
                 var _user = new ApplicationUser()
                 {
-                    UserName= user.Email,
+                    UserName = user.Email,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    Surname = user.Surname,
+
+                };
+
+                var registerState = await manager.CreateAsync(_user, user.password);
+                if (registerState.Succeeded)
+                {
+                    Response.Headers.Add("Bearer-Token", GenerateJwt(_user));
+                    return Created(string.Empty, string.Empty);
+                }
+
+                return Problem("Error in user creation", null, 500);
+
+            }
+
+            return BadRequest("User details provided incorrectly");
+        }
+
+        [HttpPost("registerVendor")]
+        public async Task<IActionResult> RegisterVendor([FromBody] ApplicationUser user)
+        {
+            if (ModelState.IsValid)
+            {
+                var _user = new ApplicationUser()
+                {
+                    UserName = user.Email,
                     Email = user.Email,
                     FirstName = user.FirstName,
                     Surname = user.Surname,
@@ -93,7 +161,7 @@ namespace Authentication.Controllers
         {
             Microsoft.Extensions.Primitives.StringValues tokens;
             Request.Headers.TryGetValue("Bearer-Token", out tokens);
-            var token= tokens.ToString();
+            var token = tokens.ToString();
             var handler = new JwtSecurityTokenHandler();
             var jsonToken = handler.ReadJwtToken(token);
             var claims = JsonSerializer.Serialize(jsonToken.Claims);
@@ -107,7 +175,7 @@ namespace Authentication.Controllers
         {
             var claim = new List<Claim> {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(ClaimTypes.Name, user.FirstName),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             };

@@ -6,7 +6,12 @@
       "ExpirationInDays": 30,
       "Algorithm": "HS256"
     },
-    "connectionString": "Server=172.23.0.4; Database=master;User Id=SA;Password=Uxz5#2@1+7"
-
+    "connectionString": "Server=authenticationdb; Database=master;User Id=SA;Password=Uxz5#2@1+7"
+  },
+  "Products": {
+    "connectionString": "Server=productdb;Database=master;User Id=SA;Password=Uxz5#2@1+7"
+  },
+  "Authorization": {
+    "connectionString": "Server=authorizationdb;Database=master;User Id=SA;Password=Uxz5#2@1+7"
   }
 }

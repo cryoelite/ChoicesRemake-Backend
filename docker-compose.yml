@@ -20,15 +20,24 @@ services:
       - ./ChoicesRemake/ProductsDBLayer/SQLData:/var/opt/mssql/data
     build: "/ChoicesRemake/ProductsDBLayer/"
     ports:
-      - "10421:1433"
+      - "10420:1433"
+    mem_limit: 1.5G
   authenticationdb:
     user: mssql
     volumes:
       - ./ChoicesRemake/AuthenticationIdentityDB/SQLData:/var/opt/mssql/data
     build: "/ChoicesRemake/AuthenticationIdentityDB/"
     ports:
-      - "10420:1433"    
-
+      - "10421:1433"
+    mem_limit: 1.5G
+  authorizationdb:
+    user: mssql
+    volumes:
+      - ./ChoicesRemake/AuthorizationDBLayer/SQLData:/var/opt/mssql/data
+    build: "/ChoicesRemake/AuthorizationDBLayer/"
+    ports:
+      - "10422:1433"
+    mem_limit: 1.5G
   zookeeper:
     image: confluentinc/cp-zookeeper:6.2.1
     hostname: zookeeper

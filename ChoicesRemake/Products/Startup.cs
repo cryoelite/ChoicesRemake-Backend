@@ -21,7 +21,8 @@ namespace Products
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ProductsDBContext>(o => o.UseSqlServer("Server=productdb;Database=master;User Id=SA;Password=Uxz5#2@1+7"));
+            var connStr = Configuration.GetSection("Authentication")["connectionString"];
+            services.AddDbContext<ProductsDBContext>(o => o.UseSqlServer(connStr));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

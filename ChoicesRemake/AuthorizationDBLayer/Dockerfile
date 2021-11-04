@@ -8,8 +8,8 @@ RUN adduser --disabled-password --gecos '' millify \
 
 RUN mkdir -p /usr/src/app
 RUN chown millify /usr/src/app
-RUN mkdir -p ./ChoicesRemake/ProductsDBLayer/SQLData:/var/opt/mssql/data
-RUN chown 10001:0 ./ChoicesRemake/ProductsDBLayer/SQLData:/var/opt/mssql/data
+RUN mkdir -p ./ChoicesRemake/AuthorizationDBLayer/SQLData:/var/opt/mssql/data
+RUN chown 10001:0 ./ChoicesRemake/AuthorizationDBLayer/SQLData:/var/opt/mssql/data
 WORKDIR /usr/src/app
 COPY . /usr/src/app
 RUN chmod +x /usr/src/app/run-initialization.sh

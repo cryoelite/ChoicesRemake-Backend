@@ -17,6 +17,7 @@ RUN chmod +x /usr/src/app/run-initialization.sh
 ENV SA_PASSWORD Uxz5#2@1+7
 ENV ACCEPT_EULA Y
 ENV MSSQL_PID Express
+ENV MSSQL_MEMORY_LIMIT_MB 1024
 
 CMD /bin/bash ./entrypoint.sh
 USER millify
