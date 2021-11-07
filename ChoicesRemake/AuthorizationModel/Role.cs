@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AuthorizationModel
+﻿namespace AuthorizationModel
 {
     public static class Role
     {

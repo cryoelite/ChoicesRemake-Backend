@@ -1,7 +1,6 @@
 ﻿using AuthorizationDBLayer;
 using AuthorizationModel;
 using IAuthorizationRepository;
-using System;
 using System.Threading.Tasks;
 
 namespace AuthorizationRepository
@@ -11,9 +10,9 @@ namespace AuthorizationRepository
         private AuthorizationDBContext adb;
 
         public AuthorizationRepo(AuthorizationDBContext dbContext) => (adb) = (dbContext);
+
         public async Task<bool> addNewUser(UserRole userRole)
         {
-
             try
             {
                 await adb.AddAsync(userRole);
@@ -25,12 +24,15 @@ namespace AuthorizationRepository
                 return false;
             }
         }
+
 #nullable enable
+
         public async Task<string?> getUserRole(string username)
         {
             var userRole = await adb.userRoles.FindAsync(username);
             return userRole?.role;
         }
+
 #nullable disable
 
         public async Task<bool> removeExistingUser(string username)
@@ -60,11 +62,8 @@ namespace AuthorizationRepository
             }
             catch
             {
-
                 return false;
             }
-
-
         }
     }
 }

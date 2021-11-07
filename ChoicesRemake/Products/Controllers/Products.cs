@@ -9,11 +9,11 @@ namespace Products.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase
+    public class Products : ControllerBase
     {
         private IProductRepo productInterface;
 
-        public WeatherForecastController(ProductsDBContext pdb) => productInterface = new ProductRepo(pdb);
+        public Products(ProductsDBContext pdb) => productInterface = new ProductRepo(pdb);
 
         [HttpGet]
         public async Task<IActionResult> Get()

@@ -1,11 +1,9 @@
 ﻿using Authentication.Settings;
 using AuthenticationIdentityModel;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.Identity.Web.Resource;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -15,7 +13,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-
+using KafkaService.Services;
 namespace Authentication.Controllers
 {
     [ApiController]
@@ -25,24 +23,19 @@ namespace Authentication.Controllers
         private readonly ILogger<Authentication> _logger;
         private readonly UserManager<ApplicationUser> manager;
         private readonly JWTSettings jwtOptions;
-
-
-
-
-        public Authentication(ILogger<Authentication> logger, UserManager<ApplicationUser> userManager, IOptions<JWTSettings> options)
-            => (_logger, manager, jwtOptions) = (logger, userManager, options.Value);
+        private readonly KafkaProducer kafkaProducer;
+        public Authentication(ILogger<Authentication> logger, UserManager<ApplicationUser> userManager, IOptions<JWTSettings> options, KafkaProducer producer)
+            => (_logger, manager, jwtOptions, kafkaProducer) = (logger, userManager, options.Value, producer);
 
         [NonAction]
-        public async Task<ApplicationUser?> Register(ApplicationUser user)
+        private async Task<ApplicationUser?> Register(ApplicationUser user)
         {
-
             var _user = new ApplicationUser()
             {
                 UserName = user.Email,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 Surname = user.Surname,
-
             };
 
             var registerState = await manager.CreateAsync(_user, user.password);
@@ -63,12 +56,20 @@ namespace Authentication.Controllers
 
                 if (result != null)
                 {
-                    Response.Headers.Add("Bearer-Token", GenerateJwt(result));
+                    var token = GenerateJwt(result);
+
+                    Response.Headers.Add("Bearer-Token", token);
+
+                    var header = new Dictionary<string, string>();
+                    header.Add("baba", "bubu");
+                    header.Add("yala", "bingbong");
+
+                    await kafkaProducer.SendData(new KeyValuePair<string, string>("Token", token), header);
+
                     return Created(string.Empty, string.Empty);
                 }
 
                 return Problem("Error in user creation", null, 500);
-
             }
 
             return BadRequest("User details provided incorrectly");
@@ -85,7 +86,6 @@ namespace Authentication.Controllers
                     Email = user.Email,
                     FirstName = user.FirstName,
                     Surname = user.Surname,
-
                 };
 
                 var registerState = await manager.CreateAsync(_user, user.password);
@@ -96,7 +96,6 @@ namespace Authentication.Controllers
                 }
 
                 return Problem("Error in user creation", null, 500);
-
             }
 
             return BadRequest("User details provided incorrectly");
@@ -113,7 +112,6 @@ namespace Authentication.Controllers
                     Email = user.Email,
                     FirstName = user.FirstName,
                     Surname = user.Surname,
-
                 };
 
                 var registerState = await manager.CreateAsync(_user, user.password);
@@ -124,7 +122,6 @@ namespace Authentication.Controllers
                 }
 
                 return Problem("Error in user creation", null, 500);
-
             }
 
             return BadRequest("User details provided incorrectly");
@@ -147,10 +144,8 @@ namespace Authentication.Controllers
                     //TODO send role to kafka authorization and also send jwt
                     Response.Headers.Add("Bearer-Token", GenerateJwt(_user));
                     return Ok();
-
                 }
                 return BadRequest("Email or Password incorrect");
-
             }
 
             return Problem("User details provided incorrectly", null, 500);
@@ -166,9 +161,7 @@ namespace Authentication.Controllers
             var jsonToken = handler.ReadJwtToken(token);
             var claims = JsonSerializer.Serialize(jsonToken.Claims);
             return new JsonResult(claims);
-
         }
-
 
         [NonAction]
         private string GenerateJwt(ApplicationUser user)

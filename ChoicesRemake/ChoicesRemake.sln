@@ -23,13 +23,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthenticationIdentityModel
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KeyManagement", "KeyManagement\KeyManagement.csproj", "{96664B36-2284-43B6-8D5A-092EB83E5236}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthorizationModel", "AuthorizationModel\AuthorizationModel.csproj", "{7FA7E030-4CC6-46B9-8DCC-4631FBB9CD51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthorizationModel", "AuthorizationModel\AuthorizationModel.csproj", "{7FA7E030-4CC6-46B9-8DCC-4631FBB9CD51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthorizationDBLayer", "AuthorizationDBLayer\AuthorizationDBLayer.csproj", "{DEE0D13A-BF63-4D03-B087-D21501CEEA08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthorizationDBLayer", "AuthorizationDBLayer\AuthorizationDBLayer.csproj", "{DEE0D13A-BF63-4D03-B087-D21501CEEA08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IAuthorizationRepository", "IAuthorizationRepository\IAuthorizationRepository.csproj", "{47FAA36F-E2D1-4519-819C-73FCF3418D14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IAuthorizationRepository", "IAuthorizationRepository\IAuthorizationRepository.csproj", "{47FAA36F-E2D1-4519-819C-73FCF3418D14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthorizationRepository", "AuthorizationRepository\AuthorizationRepository.csproj", "{A246262F-6134-4B41-9D8A-9A5172CAA3BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthorizationRepository", "AuthorizationRepository\AuthorizationRepository.csproj", "{A246262F-6134-4B41-9D8A-9A5172CAA3BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaService", "KafkaService\KafkaService.csproj", "{476B9ADB-57E6-4EDB-A997-35545DD5B24B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +95,10 @@ Global
 		{A246262F-6134-4B41-9D8A-9A5172CAA3BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A246262F-6134-4B41-9D8A-9A5172CAA3BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A246262F-6134-4B41-9D8A-9A5172CAA3BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{476B9ADB-57E6-4EDB-A997-35545DD5B24B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{476B9ADB-57E6-4EDB-A997-35545DD5B24B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{476B9ADB-57E6-4EDB-A997-35545DD5B24B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{476B9ADB-57E6-4EDB-A997-35545DD5B24B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

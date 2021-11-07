@@ -6,12 +6,17 @@
       "ExpirationInDays": 30,
       "Algorithm": "HS256"
     },
-    "connectionString": "Server=authenticationdb; Database=master;User Id=SA;Password=Uxz5#2@1+7"
+    "connectionString": "Server=172.23.0.5; Database=master;User Id=SA;Password=Uxz5#2@1+7"
   },
   "Products": {
-    "connectionString": "Server=productdb;Database=master;User Id=SA;Password=Uxz5#2@1+7"
+    "connectionString": "Server=172.23.0.4;Database=master;User Id=SA;Password=Uxz5#2@1+7"
   },
   "Authorization": {
-    "connectionString": "Server=authorizationdb;Database=master;User Id=SA;Password=Uxz5#2@1+7"
+    "connectionString": "Server=172.23.0.3;Database=master;User Id=SA;Password=Uxz5#2@1+7"
+  },
+  "Kafka": {
+    "broker1": "172.23.0.52:29092",
+    "topic1": "AlphaTopic",
+    "group1": "Group1"
   }
 }

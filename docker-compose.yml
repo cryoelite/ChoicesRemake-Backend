@@ -4,6 +4,9 @@ networks:
     external: true
     name: alphaLayer
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.23.0.0/16
 services:
 #  product:
 #    build: 
@@ -14,6 +17,16 @@ services:
 #      - "8001:443"
 #    depends_on:
 #      - db
+#  auth:
+#    build: 
+#      context: ./ChoicesRemake/
+#      dockerfile: "/Authorization/Dockerfile"
+#    ports:
+#      - "8000:80"
+#      - "8001:443"
+#    depends_on:
+#      - broker
+#      - authorizationdb
   productsdb:
     user: mssql
     volumes:
@@ -75,6 +88,9 @@ services:
       - "9092:9092"
       - "9101:9101"
       - "29092:29092"
+    networks:
+      default:
+        ipv4_address: 172.23.0.52
     mem_limit: 1024M
     mem_reservation: 256M
     cpus: 0.5
