@@ -1,10 +1,12 @@
-﻿using Authentication.Settings;
-using AuthenticationIdentityModel;
+﻿using AuthenticationIdentityModel;
+using KafkaService.Models;
+using KafkaService.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using StaticAssets;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,7 +15,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using KafkaService.Services;
+
 namespace Authentication.Controllers
 {
     [ApiController]
@@ -21,111 +23,12 @@ namespace Authentication.Controllers
     public class Authentication : ControllerBase
     {
         private readonly ILogger<Authentication> _logger;
-        private readonly UserManager<ApplicationUser> manager;
         private readonly JWTSettings jwtOptions;
         private readonly KafkaProducer kafkaProducer;
+        private readonly UserManager<ApplicationUser> manager;
+
         public Authentication(ILogger<Authentication> logger, UserManager<ApplicationUser> userManager, IOptions<JWTSettings> options, KafkaProducer producer)
             => (_logger, manager, jwtOptions, kafkaProducer) = (logger, userManager, options.Value, producer);
-
-        [NonAction]
-        private async Task<ApplicationUser?> Register(ApplicationUser user)
-        {
-            var _user = new ApplicationUser()
-            {
-                UserName = user.Email,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                Surname = user.Surname,
-            };
-
-            var registerState = await manager.CreateAsync(_user, user.password);
-            if (registerState.Succeeded)
-            {
-                return _user;
-            }
-
-            return null;
-        }
-
-        [HttpPost("registerUser")]
-        public async Task<IActionResult> RegisterUser([FromBody] ApplicationUser user)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await Register(user);
-
-                if (result != null)
-                {
-                    var token = GenerateJwt(result);
-
-                    Response.Headers.Add("Bearer-Token", token);
-
-                    var header = new Dictionary<string, string>();
-                    header.Add("baba", "bubu");
-                    header.Add("yala", "bingbong");
-
-                    await kafkaProducer.SendData(new KeyValuePair<string, string>("Token", token), header);
-
-                    return Created(string.Empty, string.Empty);
-                }
-
-                return Problem("Error in user creation", null, 500);
-            }
-
-            return BadRequest("User details provided incorrectly");
-        }
-
-        [HttpPost("registerAdmin")]
-        public async Task<IActionResult> RegisterAdmin([FromBody] ApplicationUser user)
-        {
-            if (ModelState.IsValid)
-            {
-                var _user = new ApplicationUser()
-                {
-                    UserName = user.Email,
-                    Email = user.Email,
-                    FirstName = user.FirstName,
-                    Surname = user.Surname,
-                };
-
-                var registerState = await manager.CreateAsync(_user, user.password);
-                if (registerState.Succeeded)
-                {
-                    Response.Headers.Add("Bearer-Token", GenerateJwt(_user));
-                    return Created(string.Empty, string.Empty);
-                }
-
-                return Problem("Error in user creation", null, 500);
-            }
-
-            return BadRequest("User details provided incorrectly");
-        }
-
-        [HttpPost("registerVendor")]
-        public async Task<IActionResult> RegisterVendor([FromBody] ApplicationUser user)
-        {
-            if (ModelState.IsValid)
-            {
-                var _user = new ApplicationUser()
-                {
-                    UserName = user.Email,
-                    Email = user.Email,
-                    FirstName = user.FirstName,
-                    Surname = user.Surname,
-                };
-
-                var registerState = await manager.CreateAsync(_user, user.password);
-                if (registerState.Succeeded)
-                {
-                    Response.Headers.Add("Bearer-Token", GenerateJwt(_user));
-                    return Created(string.Empty, string.Empty);
-                }
-
-                return Problem("Error in user creation", null, 500);
-            }
-
-            return BadRequest("User details provided incorrectly");
-        }
 
         [HttpPost("login")]
         public async Task<IActionResult> login([FromBody] ApplicationUser user)
@@ -141,8 +44,7 @@ namespace Authentication.Controllers
 
                 if (loginState)
                 {
-                    //TODO send role to kafka authorization and also send jwt
-                    Response.Headers.Add("Bearer-Token", GenerateJwt(_user));
+                    Response.Headers.Add(WebAPI_Headers.bearerToken, GenerateJwt(_user));
                     return Ok();
                 }
                 return BadRequest("Email or Password incorrect");
@@ -151,41 +53,153 @@ namespace Authentication.Controllers
             return Problem("User details provided incorrectly", null, 500);
         }
 
-        [HttpGet("checkToken")]
-        public IActionResult CheckToken()
+        [HttpPost("registerAdmin")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] ApplicationUser user)
         {
-            Microsoft.Extensions.Primitives.StringValues tokens;
-            Request.Headers.TryGetValue("Bearer-Token", out tokens);
-            var token = tokens.ToString();
-            var handler = new JwtSecurityTokenHandler();
-            var jsonToken = handler.ReadJwtToken(token);
-            var claims = JsonSerializer.Serialize(jsonToken.Claims);
-            return new JsonResult(claims);
+            return await Register(user, Role.admin);
+        }
+
+        [HttpPost("registerUser")]
+        public async Task<IActionResult> RegisterUser([FromBody] ApplicationUser user)
+        {
+            return await Register(user, Role.user);
+        }
+
+        [HttpPost("registerVendor")]
+        public async Task<IActionResult> RegisterVendor([FromBody] ApplicationUser user)
+        {
+            return await Register(user, Role.vendor);
+        }
+
+        [HttpGet("checkToken")]
+        public IActionResult VerifyToken([FromHeader(Name = WebAPI_Headers.bearerToken)] string token)
+        {
+            try
+            {
+                var signingKey = Encoding.UTF8.GetBytes(jwtOptions.SigningKey);
+                var encKey = Encoding.UTF8.GetBytes(jwtOptions.EncryptionKey);
+                var byteArray = new byte[32];
+                Array.Copy(encKey, byteArray, 32);
+
+                var encSigningKey = new SymmetricSecurityKey(signingKey);
+                var encEncKey = new SymmetricSecurityKey(byteArray);
+                var handler = new JwtSecurityTokenHandler();
+                var claim = handler.ValidateToken(token, new TokenValidationParameters()
+                { TokenDecryptionKey = encEncKey, IssuerSigningKey = encSigningKey, ValidAudience = jwtOptions.Issuer, ValidIssuer = jwtOptions.Issuer }, out SecurityToken securityToken);
+
+                var claims = claim.Claims.ToList();
+                var sb = new StringBuilder();
+                foreach (var elem in claims)
+                {
+                    sb.AppendLine(elem.ToString());
+                }
+                var jsonClaims = JsonSerializer.Serialize(sb.ToString());
+                return new JsonResult(jsonClaims);
+            }
+            catch
+            {
+                return BadRequest("Failed to verify token");
+            }
         }
 
         [NonAction]
         private string GenerateJwt(ApplicationUser user)
         {
-            var claim = new List<Claim> {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.FirstName),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            var claim = new Dictionary<string, object> {
+                { JwtRegisteredClaimNames.Sub, user.Id.ToString() },
+                { ClaimTypes.Name, user.FirstName},
+                { JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString() },
+                { ClaimTypes.Email, user.Email.ToString()},
             };
-
-            var secret = jwtOptions.Secret;
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
-            var creds = new SigningCredentials(key, jwtOptions.Algorithm);
             var expires = DateTime.Now.AddDays(Convert.ToDouble(jwtOptions.ExpirationInDays));
 
-            var token = new JwtSecurityToken(
-                issuer: jwtOptions.Issuer,
-                audience: jwtOptions.Issuer,
-                claim,
-                expires: expires,
-                signingCredentials: creds
-                );
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var signingKey = Encoding.UTF8.GetBytes(jwtOptions.SigningKey);
+            var encKey = Encoding.UTF8.GetBytes(jwtOptions.EncryptionKey);
+            var byteArray = new byte[32];
+            Array.Copy(encKey, byteArray, 32);
+
+            var encSigningKey = new SigningCredentials(new SymmetricSecurityKey(signingKey), jwtOptions.SigningAlgorithm);
+            var encEncKey = new EncryptingCredentials(new SymmetricSecurityKey(byteArray), jwtOptions.KeyWrapAlgorithm, jwtOptions.DataEncryptionAlgorithm);
+
+            var token = new SecurityTokenDescriptor()
+            {
+                Claims = claim,
+                EncryptingCredentials = encEncKey,
+                SigningCredentials = encSigningKey,
+                Audience = jwtOptions.Issuer,
+                Issuer = jwtOptions.Issuer,
+                IssuedAt = DateTime.UtcNow,
+                Expires = expires,
+            };
+            var secureToken = new JwtSecurityTokenHandler().CreateEncodedJwt(token);
+            return secureToken;
+        }
+
+        [NonAction]
+        private async Task<IActionResult> Register(ApplicationUser user, string role)
+        {
+            if (ModelState.IsValid)
+            {
+                if (role == Role.admin || role == Role.vendor)
+                {
+                    var result = await VerifyAdminRole();
+                    if (result != null)
+                    {
+                        return result;
+                    }
+                }
+                //Could store role in the jwt itself, but in a seperate api for no reason xd
+                var _user = new ApplicationUser()
+                {
+                    UserName = user.Email,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    Surname = user.Surname,
+                };
+
+                var registerState = await manager.CreateAsync(_user, user.password);
+                if (registerState.Succeeded)
+                {
+                    var token = GenerateJwt(_user);
+
+                    var kafkaData = new KafkaData(InvocationType.justInvoke, MethodNames.addUser);
+                    kafkaData.AddHeader(WebAPI_Headers.bearerToken, token);
+                    kafkaData.AddHeader(Role.role, role);
+
+                    await kafkaProducer.SendData(kafkaData);
+
+                    Response.Headers.Add(WebAPI_Headers.bearerToken, token);
+                    return Created(string.Empty, string.Empty);
+                }
+                return Problem("Error in user creation", null, 500);
+            }
+
+            return BadRequest("User details provided incorrectly");
+        }
+
+        [NonAction]
+        private async Task<IActionResult?> VerifyAdminRole()
+        {
+            Microsoft.Extensions.Primitives.StringValues backerToken;
+            var backerResult = Request.Headers.TryGetValue(WebAPI_Headers.backerToken, out backerToken);
+            if (!backerResult)
+            {
+                return Problem($"For registering a user of role {Role.admin}, a valid admin bearer-token is needed in the header {WebAPI_Headers.backerToken}", null, 401);
+            }
+
+            var kafkaData = new KafkaData(InvocationType.invokeAndReturn, MethodNames.verifyAdmin);
+            kafkaData.AddHeader(WebAPI_Headers.backerToken, backerToken);
+
+            var result = await kafkaProducer.SendAndReceiveData(kafkaData);
+            if (result.message.Value == ResultStatus.unavailable)
+            {
+                return Problem($"Internal server error in processing the request", null, 500);
+            }
+            else if (result.message.Value != ResultStatus.success)
+            {
+                return Problem($"Invalid backer token or backer role not Admin", null, 401);
+            }
+            return null;
         }
     }
 }

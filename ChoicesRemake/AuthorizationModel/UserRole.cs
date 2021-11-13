@@ -1,13 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using StaticAssets;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AuthorizationModel
 {
     public class UserRole
     {
-        [Key]
-        public string username { get; set; }
-
         [NotMapped]
         private string _role;
 
@@ -26,5 +24,8 @@ namespace AuthorizationModel
                 }
             }
         }
+
+        [Key]
+        public string username { get; set; }
     }
 }

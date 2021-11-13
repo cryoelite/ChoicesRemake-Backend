@@ -12,9 +12,8 @@ namespace ProductsModel
         }
 
         public long DescId { get; set; }
-        public string Title { get; set; }
         public string LongDescription { get; set; }
-
         public virtual ICollection<Product> Products { get; set; }
+        public string Title { get; set; }
     }
 }

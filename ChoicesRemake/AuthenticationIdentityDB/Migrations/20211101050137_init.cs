@@ -5,6 +5,37 @@ namespace AuthenticationIdentityDB.Migrations
 {
     public partial class init : Migration
     {
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "AspNetRoleClaims",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserClaims",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserLogins",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserRoles",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserTokens",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers",
+                schema: "dbo");
+        }
+
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
@@ -215,37 +246,6 @@ namespace AuthenticationIdentityDB.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
-        }
-
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropTable(
-                name: "AspNetRoleClaims",
-                schema: "dbo");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserClaims",
-                schema: "dbo");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserLogins",
-                schema: "dbo");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserRoles",
-                schema: "dbo");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserTokens",
-                schema: "dbo");
-
-            migrationBuilder.DropTable(
-                name: "AspNetRoles",
-                schema: "dbo");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers",
-                schema: "dbo");
         }
     }
 }

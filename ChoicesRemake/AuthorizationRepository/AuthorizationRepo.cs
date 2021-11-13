@@ -25,15 +25,11 @@ namespace AuthorizationRepository
             }
         }
 
-#nullable enable
-
         public async Task<string?> getUserRole(string username)
         {
             var userRole = await adb.userRoles.FindAsync(username);
             return userRole?.role;
         }
-
-#nullable disable
 
         public async Task<bool> removeExistingUser(string username)
         {

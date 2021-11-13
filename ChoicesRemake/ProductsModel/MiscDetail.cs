@@ -13,8 +13,7 @@ namespace ProductsModel
 
         public long DetailId { get; set; }
         public string Key { get; set; }
-        public string Value { get; set; }
-
         public virtual ICollection<Product> Products { get; set; }
+        public string Value { get; set; }
     }
 }

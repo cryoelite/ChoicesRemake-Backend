@@ -8,10 +8,10 @@ namespace AuthenticationIdentityModel
         [PersonalData]
         public string FirstName { get; set; }
 
-        [PersonalData]
-        public string Surname { get; set; }
-
         [NotMapped]
         public string password { get; set; }
+
+        [PersonalData]
+        public string Surname { get; set; }
     }
 }

@@ -12,8 +12,7 @@ namespace ProductsModel
         }
 
         public long CatId { get; set; }
-        public string Value { get; set; }
-
         public virtual ICollection<Product> Products { get; set; }
+        public string Value { get; set; }
     }
 }

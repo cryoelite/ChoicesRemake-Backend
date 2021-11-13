@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31729.503
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Products", "Products\Products.csproj", "{7BDD6A1F-7917-4A2E-9CB9-0BEECFDE742B}"
 EndProject
@@ -21,8 +21,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthenticationIdentityDB", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthenticationIdentityModel", "AuthenticationIdentityModel\AuthenticationIdentityModel.csproj", "{5040FFE9-7B52-4B75-9388-43167D7D8077}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KeyManagement", "KeyManagement\KeyManagement.csproj", "{96664B36-2284-43B6-8D5A-092EB83E5236}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthorizationModel", "AuthorizationModel\AuthorizationModel.csproj", "{7FA7E030-4CC6-46B9-8DCC-4631FBB9CD51}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthorizationDBLayer", "AuthorizationDBLayer\AuthorizationDBLayer.csproj", "{DEE0D13A-BF63-4D03-B087-D21501CEEA08}"
@@ -31,7 +29,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IAuthorizationRepository", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthorizationRepository", "AuthorizationRepository\AuthorizationRepository.csproj", "{A246262F-6134-4B41-9D8A-9A5172CAA3BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KafkaService", "KafkaService\KafkaService.csproj", "{476B9ADB-57E6-4EDB-A997-35545DD5B24B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KafkaService", "KafkaService\KafkaService.csproj", "{476B9ADB-57E6-4EDB-A997-35545DD5B24B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StaticAssets", "StaticAssets\StaticAssets.csproj", "{1B83EADB-DBAF-4686-984A-C6D949EB72CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,10 +75,6 @@ Global
 		{5040FFE9-7B52-4B75-9388-43167D7D8077}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5040FFE9-7B52-4B75-9388-43167D7D8077}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5040FFE9-7B52-4B75-9388-43167D7D8077}.Release|Any CPU.Build.0 = Release|Any CPU
-		{96664B36-2284-43B6-8D5A-092EB83E5236}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{96664B36-2284-43B6-8D5A-092EB83E5236}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{96664B36-2284-43B6-8D5A-092EB83E5236}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{96664B36-2284-43B6-8D5A-092EB83E5236}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7FA7E030-4CC6-46B9-8DCC-4631FBB9CD51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7FA7E030-4CC6-46B9-8DCC-4631FBB9CD51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FA7E030-4CC6-46B9-8DCC-4631FBB9CD51}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -99,6 +95,10 @@ Global
 		{476B9ADB-57E6-4EDB-A997-35545DD5B24B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{476B9ADB-57E6-4EDB-A997-35545DD5B24B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{476B9ADB-57E6-4EDB-A997-35545DD5B24B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B83EADB-DBAF-4686-984A-C6D949EB72CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B83EADB-DBAF-4686-984A-C6D949EB72CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B83EADB-DBAF-4686-984A-C6D949EB72CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B83EADB-DBAF-4686-984A-C6D949EB72CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

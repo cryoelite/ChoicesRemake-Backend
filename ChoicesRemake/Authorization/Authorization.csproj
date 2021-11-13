@@ -1,21 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <UserSecretsId>9a18dbab-092b-406e-9dfa-a333382ac5af</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	  <Nullable>enable</Nullable>
 	  <DockerfileRunArguments>--network alphaLayer --rm</DockerfileRunArguments>
+	  <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Confluent.Kafka" Version="1.8.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.11" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.11">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
@@ -26,7 +27,7 @@
     <ProjectReference Include="..\AuthorizationRepository\AuthorizationRepository.csproj" />
     <ProjectReference Include="..\IAuthorizationRepository\IAuthorizationRepository.csproj" />
     <ProjectReference Include="..\KafkaService\KafkaService.csproj" />
-    <ProjectReference Include="..\KeyManagement\KeyManagement.csproj" />
+    <ProjectReference Include="..\StaticAssets\StaticAssets.csproj" />
   </ItemGroup>
 
   <ItemGroup>

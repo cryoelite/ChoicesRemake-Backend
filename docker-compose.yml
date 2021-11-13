@@ -3,10 +3,11 @@ networks:
   default:
     external: true
     name: alphaLayer
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.23.0.0/16
+#    driver: bridge
+#    ipam:
+#      config:
+#        - subnet: 172.23.0.0/16
+#When ready for prod, remove external: true and uncomment driver and ipam sections above. Also uncomment the .net images and give them network.
 services:
 #  product:
 #    build: 
@@ -35,6 +36,9 @@ services:
     ports:
       - "10420:1433"
     mem_limit: 1.5G
+    networks:
+      default:
+        ipv4_address: 172.23.0.50
   authenticationdb:
     user: mssql
     volumes:
@@ -43,6 +47,9 @@ services:
     ports:
       - "10421:1433"
     mem_limit: 1.5G
+    networks:
+      default:
+        ipv4_address: 172.23.0.51
   authorizationdb:
     user: mssql
     volumes:
@@ -51,6 +58,9 @@ services:
     ports:
       - "10422:1433"
     mem_limit: 1.5G
+    networks:
+      default:
+        ipv4_address: 172.23.0.52
   zookeeper:
     image: confluentinc/cp-zookeeper:6.2.1
     hostname: zookeeper
@@ -62,7 +72,11 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-
+      KAFKA_LOG_RETENTION_MS: 60000
+      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 30000
+    networks:
+      default:
+        ipv4_address: 172.23.0.53
   rest-proxy:
     image: confluentinc/cp-kafka-rest:6.2.1
     depends_on:
@@ -77,6 +91,9 @@ services:
       KAFKA_REST_HOST_NAME: rest-proxy
       KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:29092'
       KAFKA_REST_LISTENERS: "http://0.0.0.0:8082"
+    networks:
+      default:
+        ipv4_address: 172.23.0.54
 
   broker:
     image: confluentinc/cp-server:6.2.1
@@ -90,7 +107,7 @@ services:
       - "29092:29092"
     networks:
       default:
-        ipv4_address: 172.23.0.52
+        ipv4_address: 172.23.0.55
     mem_limit: 1024M
     mem_reservation: 256M
     cpus: 0.5

@@ -4,6 +4,12 @@ namespace AuthorizationDBLayer.Migrations
 {
     public partial class init : Migration
     {
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "userRoles");
+        }
+
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -17,12 +23,6 @@ namespace AuthorizationDBLayer.Migrations
                 {
                     table.PrimaryKey("PK_userRoles", x => x.username);
                 });
-        }
-
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropTable(
-                name: "userRoles");
         }
     }
 }

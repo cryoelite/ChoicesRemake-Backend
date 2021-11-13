@@ -11,11 +11,10 @@ namespace ProductsModel
             Products = new HashSet<Product>();
         }
 
-        public string Name { get; set; }
+        public long ImageId { get; set; }
         public string Location { get; set; }
         public string MiniDesc { get; set; }
-        public long ImageId { get; set; }
-
+        public string Name { get; set; }
         public virtual ICollection<Product> Products { get; set; }
     }
 }

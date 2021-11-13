@@ -1,38 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using IAuthorizationRepository;
-using AuthorizationDBLayer;
+﻿using AuthorizationDBLayer;
+using AuthorizationModel;
 using AuthorizationRepository;
+using IAuthorizationRepository;
+using KafkaService.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using StaticAssets;
+using System.Threading.Tasks;
 
 namespace Authorization.Services
 {
     public class Consumer
     {
-        public List<string> outps = new List<string>();
-        private IAuthorizationRepo repo;
+        public JWTDecryptor jwtDecryptor;
         private readonly ILogger<Consumer> _logger;
-        public Consumer(DbContextOptions<AuthorizationDBContext> options, ILogger<Consumer> logger)
+        private IAuthorizationRepo repo;
+
+        public Consumer(DbContextOptions<AuthorizationDBContext> options, ILogger<Consumer> logger, JWTDecryptor jWTDecryptor)
         {
             var adb = new AuthorizationDBContext(options);
             repo = new AuthorizationRepo(adb);
             _logger = logger;
+            this.jwtDecryptor = jWTDecryptor;
         }
 
-        public async Task ManageMessage(KeyValuePair<string, string> message, Dictionary<string, string>? headers)
+        public async Task ManageMessage(KafkaData _kafkaData)
         {
-
-            outps.Add($"Message recieved is ${message.Key} with ${message.Value}");
-            if (headers != null)
+            _logger.LogInformation("Processing a message in Authorization");
+            if (_kafkaData.GetMethodName() == MethodNames.addUser)
             {
-                foreach (var elem in headers) 
+                var userRole = new UserRole();
+                var token = _kafkaData.GetCustomHeader(WebAPI_Headers.bearerToken);
+                var role = _kafkaData.GetCustomHeader(Role.role);
+                if (token == null || role == null)
                 {
-                    outps.Add($"Header key {elem.Key} and {elem.Value}");
+                    throw new System.Exception($"Kafka Message missing {(token == null ? WebAPI_Headers.bearerToken : Role.role)} header");
                 }
+
+                userRole.username = jwtDecryptor.GetUsername(token);
+                userRole.role = role;
+                await repo.addNewUser(userRole);
             }
         }
     }

@@ -18,18 +18,6 @@ namespace Products
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            var connStr = Configuration.GetSection("Products")["connectionString"];
-            services.AddDbContext<ProductsDBContext>(o => o.UseSqlServer(connStr));
-            services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Products", Version = "v1" });
-            });
-        }
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -49,6 +37,18 @@ namespace Products
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+        }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            var connStr = Configuration.GetSection("Products")["connectionString"];
+            services.AddDbContext<ProductsDBContext>(o => o.UseSqlServer(connStr));
+            services.AddControllers();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Products", Version = "v1" });
             });
         }
     }
