@@ -1,5 +1,6 @@
 ﻿using IProductsRepository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using ProductsDBLayer;
 using ProductsRepository;
 using System.Text.Json;
@@ -11,9 +12,13 @@ namespace Products.Controllers
     [Route("[controller]")]
     public class Products : ControllerBase
     {
-        private IProductRepo productInterface;
-
-        public Products(ProductsDBContext pdb) => productInterface = new ProductRepo(pdb);
+        private IProductRepo productsRepository;
+        private ILogger<Products> logger;
+        public Products(IProductRepo productRepo, ILogger<Products> logger)
+        {
+            productsRepository= productRepo;
+            this.logger= logger;
+        }
 
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -68,7 +73,7 @@ namespace Products.Controllers
              };
 
              await productInterface.storeProduct(product, cat, color, desc, img, mass, miscDetail, size);*/
-            var product = productInterface.searchAndGetProductsByName("standard plate");
+            var product = productsRepository.searchAndGetProductsByName("standard plate");
             var jsonProduct = JsonSerializer.Serialize(product);
             return Ok(jsonProduct);
         }

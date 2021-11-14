@@ -16,10 +16,11 @@ namespace Authorization.Services
         private readonly ILogger<Consumer> _logger;
         private IAuthorizationRepo repo;
 
-        public Consumer(DbContextOptions<AuthorizationDBContext> options, ILogger<Consumer> logger, JWTDecryptor jWTDecryptor)
+        public Consumer(DbContextOptions<AuthorizationDBContext> options, ILogger<AuthorizationRepo> authLogger, ILogger<Consumer> logger, JWTDecryptor jWTDecryptor)
         {
+
             var adb = new AuthorizationDBContext(options);
-            repo = new AuthorizationRepo(adb);
+            repo = new AuthorizationRepo(adb, authLogger);
             _logger = logger;
             this.jwtDecryptor = jWTDecryptor;
         }

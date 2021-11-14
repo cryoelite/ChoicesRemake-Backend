@@ -1,6 +1,7 @@
 ﻿using DiffMatchPatch;
 using IProductsRepository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ProductsDBLayer;
 using ProductsModel;
 using System;
@@ -13,25 +14,32 @@ namespace ProductsRepository
     public class ProductRepo : IProductRepo
     {
         private ProductsDBContext pdb;
+        private ILogger<ProductRepo> logger;
+        public ProductRepo(ProductsDBContext dbContext, ILogger<ProductRepo> logger) => (pdb,this.logger) = (dbContext,logger);
 
-        public ProductRepo(ProductsDBContext dbContext) => (pdb) = (dbContext);
 
-#nullable enable
 
         public async Task<Product?> getProductById(int id)
         {
+            logger.LogInformation("Getting product by ID");
+
             var product = await pdb.Products.FindAsync(id);
             if (product == null)
             {
+                logger.LogInformation($"Product with id {id} not found");
+
                 return null;
             }
+            logger.LogInformation($"Product with id {id} successfully found");
+
             return product;
         }
 
-#nullable disable
 
-        public List<Product> searchAndGetProductsByName(string name)
+        public List<Product>? searchAndGetProductsByName(string name)
         {
+            logger.LogInformation($"Searching for products with name {name}");
+
             var dmp = new diff_match_patch();
 
             var products = pdb.Products.AsNoTracking().Where(delegate (Product product)
@@ -44,19 +52,25 @@ namespace ProductsRepository
                double similarity = 100 - ((double)result / Math.Max(convName.Length, convProdName.Length) * 100);
                return similarity >= 60;
            }).ToList();
+            logger.LogInformation($"Product with name {name} {(products==null ? "not" : "")} found");
 
             return products;
         }
 
         public async Task<List<Product>> searchAndGetProductsByPriceRange(decimal minPrice = decimal.MinValue, decimal maxPrice = decimal.MaxValue)
         {
+            logger.LogInformation($"Searching for within price {minPrice} and {maxPrice}");
+
             var products = await pdb.Products.AsNoTracking().Where(product => product.Price >= minPrice && product.Price < maxPrice).ToListAsync();
+            logger.LogInformation($"Found {products.Count} products");
 
             return products;
         }
 
         public async Task storeProduct(Product product, Category cat, Color color, Description desc, Image image, Mass mass, MiscDetail detail, Size size)
         {
+            logger.LogInformation($"Storing a new product with name {product.Name}");
+
             cat.Products.Add(product);
             color.Products.Add(product);
             image.Products.Add(product);
@@ -75,6 +89,8 @@ namespace ProductsRepository
 
             await pdb.AddAsync(product);
             await pdb.SaveChangesAsync();
+            logger.LogInformation($"Successfully stored product with name {product.Name}");
+
         }
     }
 }

@@ -1,5 +1,7 @@
 using Authorization.Services;
 using AuthorizationDBLayer;
+using AuthorizationRepository;
+using IAuthorizationRepository;
 using KafkaService.Models;
 using KafkaService.Services;
 using Microsoft.AspNetCore.Builder;
@@ -52,6 +54,7 @@ namespace Authorization
 
             var connStr = Configuration.GetSection(ConfigurationKeys.authorizationSection)[ConfigurationKeys.connectionString];
             services.AddDbContext<AuthorizationDBContext>(o => o.UseSqlServer(connStr));
+            services.AddScoped<IAuthorizationRepo, AuthorizationRepo>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

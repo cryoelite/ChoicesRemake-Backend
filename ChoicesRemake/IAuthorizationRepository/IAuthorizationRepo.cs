@@ -7,10 +7,10 @@ namespace IAuthorizationRepository
     {
         public Task<bool> addNewUser(UserRole userRole);
 
-        public Task<string?> getUserRole(string username);
+        public Task<string?> getUser(string username);
 
         public Task<bool> removeExistingUser(string username);
 
-        public Task<bool> updateUserRole(UserRole userRole);
+        public Task<bool> updateUser(UserRole userRole);
     }
 }

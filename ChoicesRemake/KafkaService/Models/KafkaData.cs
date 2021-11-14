@@ -14,10 +14,11 @@ namespace KafkaService.Models
 
         public KafkaData(string invocationType, string methodName)
         {
+            var guid = Guid.NewGuid();
             message = new KeyValuePair<string, string>(invocationType, ResultStatus.processing);
             headers = new Headers();
             //order of adding headers matter.
-            AddHeader(uidKey, new Guid().ToString());
+            AddHeader(uidKey, guid.ToString());
             AddHeader(methodNameKey, methodName);
         }
 

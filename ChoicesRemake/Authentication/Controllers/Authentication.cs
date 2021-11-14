@@ -1,4 +1,5 @@
-﻿using AuthenticationIdentityModel;
+﻿using Authentication.Models;
+using AuthenticationIdentityModel;
 using KafkaService.Models;
 using KafkaService.Services;
 using Microsoft.AspNetCore.Identity;
@@ -31,7 +32,7 @@ namespace Authentication.Controllers
             => (_logger, manager, jwtOptions, kafkaProducer) = (logger, userManager, options.Value, producer);
 
         [HttpPost("login")]
-        public async Task<IActionResult> login([FromBody] ApplicationUser user)
+        public async Task<IActionResult> login([FromBody] User user)
         {
             if (ModelState.IsValid)
             {
@@ -40,7 +41,7 @@ namespace Authentication.Controllers
                 {
                     return NotFound("User not found");
                 }
-                var loginState = await manager.CheckPasswordAsync(_user, user.password);
+                var loginState = await manager.CheckPasswordAsync(_user, user.Password);
 
                 if (loginState)
                 {
@@ -54,24 +55,24 @@ namespace Authentication.Controllers
         }
 
         [HttpPost("registerAdmin")]
-        public async Task<IActionResult> RegisterAdmin([FromBody] ApplicationUser user)
+        public async Task<IActionResult> RegisterAdmin([FromBody] User user)
         {
             return await Register(user, Role.admin);
         }
 
         [HttpPost("registerUser")]
-        public async Task<IActionResult> RegisterUser([FromBody] ApplicationUser user)
+        public async Task<IActionResult> RegisterUser([FromBody] User user)
         {
             return await Register(user, Role.user);
         }
 
         [HttpPost("registerVendor")]
-        public async Task<IActionResult> RegisterVendor([FromBody] ApplicationUser user)
+        public async Task<IActionResult> RegisterVendor([FromBody] User user)
         {
             return await Register(user, Role.vendor);
         }
 
-        [HttpGet("checkToken")]
+        [HttpGet("verifyToken")]
         public IActionResult VerifyToken([FromHeader(Name = WebAPI_Headers.bearerToken)] string token)
         {
             try
@@ -136,10 +137,15 @@ namespace Authentication.Controllers
         }
 
         [NonAction]
-        private async Task<IActionResult> Register(ApplicationUser user, string role)
+        private async Task<IActionResult> Register(User user, string role)
         {
             if (ModelState.IsValid)
             {
+
+                if (await doesUserExist(user))
+                {
+                    return Problem("User already exists", statusCode: 409);
+                }
                 if (role == Role.admin || role == Role.vendor)
                 {
                     var result = await VerifyAdminRole();
@@ -154,10 +160,10 @@ namespace Authentication.Controllers
                     UserName = user.Email,
                     Email = user.Email,
                     FirstName = user.FirstName,
-                    Surname = user.Surname,
+                    Surname = user.LastName,
                 };
 
-                var registerState = await manager.CreateAsync(_user, user.password);
+                var registerState = await manager.CreateAsync(_user, user.Password);
                 if (registerState.Succeeded)
                 {
                     var token = GenerateJwt(_user);
@@ -171,10 +177,19 @@ namespace Authentication.Controllers
                     Response.Headers.Add(WebAPI_Headers.bearerToken, token);
                     return Created(string.Empty, string.Empty);
                 }
-                return Problem("Error in user creation", null, 500);
+                var error = registerState.Errors.FirstOrDefault();
+                return Problem($"Error in user creation {error?.Description}", null, 400);
             }
 
             return BadRequest("User details provided incorrectly");
+        }
+
+        [NonAction]
+        private async Task<bool> doesUserExist(User user)
+        {
+
+            var userStatus = await manager.FindByEmailAsync(user.Email);
+            return userStatus != null;
         }
 
         [NonAction]

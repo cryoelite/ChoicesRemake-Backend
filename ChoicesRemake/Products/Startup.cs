@@ -1,3 +1,4 @@
+using IProductsRepository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using ProductsDBLayer;
+using ProductsRepository;
+using StaticAssets;
 
 namespace Products
 {
@@ -43,8 +46,9 @@ namespace Products
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connStr = Configuration.GetSection("Products")["connectionString"];
+            var connStr = Configuration.GetSection(ConfigurationKeys.productsSection)[ConfigurationKeys.connectionString];
             services.AddDbContext<ProductsDBContext>(o => o.UseSqlServer(connStr));
+            services.AddScoped<IProductRepo, ProductRepo>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

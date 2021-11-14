@@ -49,7 +49,7 @@ namespace KafkaService.Services
             {
                 GroupId = groupSecondary,
                 BootstrapServers = brokerURL,
-                AutoOffsetReset = AutoOffsetReset.Earliest,
+                AutoOffsetReset = AutoOffsetReset.Latest,
                 ClientId = clientID,
                 EnableAutoCommit = false,
             };

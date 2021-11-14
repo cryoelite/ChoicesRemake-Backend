@@ -15,10 +15,11 @@ namespace Authorization.Services
         private readonly ILogger<Producer> _logger;
         private IAuthorizationRepo repo;
 
-        public Producer(DbContextOptions<AuthorizationDBContext> options, ILogger<Producer> logger, JWTDecryptor jWTDecryptor)
+        public Producer(DbContextOptions<AuthorizationDBContext> options,ILogger<AuthorizationRepo> authLogger, ILogger<Producer> logger, JWTDecryptor jWTDecryptor)
         {
+
             var adb = new AuthorizationDBContext(options);
-            repo = new AuthorizationRepo(adb);
+            repo = new AuthorizationRepo(adb,authLogger);
             _logger = logger;
             this.jwtDecryptor = jWTDecryptor;
         }
@@ -34,15 +35,19 @@ namespace Authorization.Services
                 if (backerToken != null)
                 {
                     var username = jwtDecryptor.GetUsername(backerToken);
-                    var role = await repo.getUserRole(username);
-                    if (role == Role.admin)
+                    if (username != null)
                     {
-                        _kafkaData.MarkSuccess();
+                        var role = await repo.getUser(username);
+                        if (role == Role.admin)
+                        {
+                            _logger.LogInformation($"{username} indeed has role {Role.admin}");
+
+                            _kafkaData.MarkSuccess();
+                        }
                     }
                 }
             }
 
-            _kafkaData.AddHeader("buba", "bubu");
             return _kafkaData;
         }
     }
