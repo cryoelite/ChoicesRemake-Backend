@@ -5,6 +5,10 @@ using ProductsModel;
 
 namespace ProductsDBLayer
 {
+    /// <summary>
+    /// Currently(v3), the unique modifier is not applied to tables so values will repeat and hence
+    /// there will be no problem in storing multiple entries with same values. This is an issue.
+    /// </summary>
     public partial class ProductsDBContext : DbContext
     {
         public ProductsDBContext(DbContextOptions<ProductsDBContext> options)

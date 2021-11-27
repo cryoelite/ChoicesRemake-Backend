@@ -20,3 +20,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Authorization.dll"]
+ENV ASPNETCORE_ENVIRONMENT Production

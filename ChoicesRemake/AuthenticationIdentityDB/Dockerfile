@@ -14,6 +14,7 @@ WORKDIR /usr/src/app
 COPY . /usr/src/app
 RUN chmod +x /usr/src/app/run-initialization.sh
 
+
 ENV SA_PASSWORD Uxz5#2@1+7
 ENV ACCEPT_EULA Y
 ENV MSSQL_PID Express

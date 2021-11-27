@@ -50,6 +50,7 @@ namespace KafkaService.Services
                 GroupId = groupSecondary,
                 BootstrapServers = brokerURL,
                 AutoOffsetReset = AutoOffsetReset.Latest,
+
                 ClientId = clientID,
                 EnableAutoCommit = false,
             };
@@ -59,11 +60,11 @@ namespace KafkaService.Services
 
                 consumer.Subscribe(topicSecondary);
 
-                await Task.Delay(2000).ContinueWith(t =>
+                await Task.Delay(4000).ContinueWith(t =>
                 {
-                    for (var loopCount = 0; loopCount < 4; ++loopCount)
+                    for (var loopCount = 0; loopCount < 6; ++loopCount)
                     {
-                        var consumedValue = consumer.Consume(50);
+                        var consumedValue = consumer.Consume(150);
                         if (consumedValue != null)
                         {
                             _logger.LogInformation($"Consuming reply in {clientID}");
@@ -77,13 +78,11 @@ namespace KafkaService.Services
                             }
                             consumer.Commit();
                         }
-                        else
-                        {
-                            break;
-                        }
                     }
                 });
-
+                consumer.Unsubscribe();
+                consumer.Close();
+                consumer.Dispose();
                 return kafkaData;
             }
         }

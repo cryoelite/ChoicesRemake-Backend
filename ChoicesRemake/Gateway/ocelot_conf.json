@@ -1,0 +1,77 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/Products/{anything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product",
+          "Port": 443
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Products/{anything}",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "AuthKey",
+        "AllowedScopes": [ "http://schemas.microsoft.com/ws/2008/06/identity/claims/role User" ]
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/asset/{anything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "assetmanager",
+          "Port": 443
+        }
+      ],
+      "UpstreamPathTemplate": "/api/asset/{anything}",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "DangerousAcceptAnyServerCertificateValidator": true
+    },
+    {
+      "DownstreamPathTemplate": "/auth/register{type}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "authentication",
+          "Port": 443
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Secure/Register?type={type}",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DangerousAcceptAnyServerCertificateValidator": true
+    },
+    {
+      "DownstreamPathTemplate": "/auth/login",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "authentication",
+          "Port": 443
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Secure/Login",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DangerousAcceptAnyServerCertificateValidator": true
+    },
+    {
+      "DownstreamPathTemplate": "/auth/verifyToken",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "authentication",
+          "Port": 443
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Secure/VerifyToken",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DangerousAcceptAnyServerCertificateValidator": true
+    }
+
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "https://172.23.0.2:8002"
+  }
+}

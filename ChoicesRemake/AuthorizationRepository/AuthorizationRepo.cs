@@ -11,6 +11,7 @@ namespace AuthorizationRepository
     {
         private AuthorizationDBContext adb;
         private ILogger<AuthorizationRepo> logger;
+
         public AuthorizationRepo(AuthorizationDBContext dbContext, ILogger<AuthorizationRepo> logger) => (adb, this.logger) = (dbContext, logger);
 
         public async Task<bool> addNewUser(UserRole userRole)
@@ -57,9 +58,9 @@ namespace AuthorizationRepository
                     return true;
                 }
             }
-            catch(Exception e)
-            { 
-                    logger.LogInformation($"Failed in removing user {username} with {e.Message}");
+            catch (Exception e)
+            {
+                logger.LogInformation($"Failed in removing user {username} with {e.Message}");
             }
 
             return false;
@@ -77,7 +78,7 @@ namespace AuthorizationRepository
 
                 return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 logger.LogInformation($"Failed in updating {userRole.username} with {e.Message}");
 

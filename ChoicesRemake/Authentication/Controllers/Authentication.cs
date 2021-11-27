@@ -32,20 +32,34 @@ namespace Authentication.Controllers
             => (_logger, manager, jwtOptions, kafkaProducer) = (logger, userManager, options.Value, producer);
 
         [HttpPost("login")]
-        public async Task<IActionResult> login([FromBody] User user)
+        public async Task<IActionResult> login([FromBody] LoginUser user)
         {
             if (ModelState.IsValid)
             {
-                var _user = manager.Users.SingleOrDefault(u => u.Email == user.Email);
-                if (_user is null || _user == new ApplicationUser())
+                var userStatus = await doesUserExist(user.Email);
+                if (!userStatus)
                 {
                     return NotFound("User not found");
                 }
+                var _user = await manager.FindByEmailAsync(user.Email);
                 var loginState = await manager.CheckPasswordAsync(_user, user.Password);
 
                 if (loginState)
                 {
-                    Response.Headers.Add(WebAPI_Headers.bearerToken, GenerateJwt(_user));
+                    var kafkaData = new KafkaData(InvocationType.invokeAndReturn, MethodNames.getRole);
+                    kafkaData.AddHeader(ClaimTypes.Email, user.Email);
+                    var result = await kafkaProducer.SendAndReceiveData(kafkaData);
+                    if (result.message.Value != ResultStatus.success)
+                    {
+                        return Problem("Internal Server error in getting login data", statusCode: 500);
+                    }
+                    var role = result.GetCustomHeader(Role.role);
+                    if (role == null)
+                    {
+                        _logger.LogError("Login data doesn't have Role header in Kafka");
+                        return Problem("Internal Server error in getting login data", statusCode: 500);
+                    }
+                    Response.Headers.Add(CustomHeader.bearerToken, GenerateJwt(_user, role));
                     return Ok();
                 }
                 return BadRequest("Email or Password incorrect");
@@ -55,25 +69,25 @@ namespace Authentication.Controllers
         }
 
         [HttpPost("registerAdmin")]
-        public async Task<IActionResult> RegisterAdmin([FromBody] User user)
+        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterUser user)
         {
             return await Register(user, Role.admin);
         }
 
         [HttpPost("registerUser")]
-        public async Task<IActionResult> RegisterUser([FromBody] User user)
+        public async Task<IActionResult> RegisterUser([FromBody] RegisterUser user)
         {
             return await Register(user, Role.user);
         }
 
         [HttpPost("registerVendor")]
-        public async Task<IActionResult> RegisterVendor([FromBody] User user)
+        public async Task<IActionResult> RegisterVendor([FromBody] RegisterUser user)
         {
             return await Register(user, Role.vendor);
         }
 
         [HttpGet("verifyToken")]
-        public IActionResult VerifyToken([FromHeader(Name = WebAPI_Headers.bearerToken)] string token)
+        public IActionResult VerifyToken([FromHeader(Name = CustomHeader.bearerToken)] string token)
         {
             try
             {
@@ -104,13 +118,21 @@ namespace Authentication.Controllers
         }
 
         [NonAction]
-        private string GenerateJwt(ApplicationUser user)
+        private async Task<bool> doesUserExist(string username)
+        {
+            var userStatus = await manager.FindByEmailAsync(username);
+            return userStatus != null;
+        }
+
+        [NonAction]
+        private string GenerateJwt(ApplicationUser user, string role)
         {
             var claim = new Dictionary<string, object> {
                 { JwtRegisteredClaimNames.Sub, user.Id.ToString() },
                 { ClaimTypes.Name, user.FirstName},
                 { JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString() },
                 { ClaimTypes.Email, user.Email.ToString()},
+                { ClaimTypes.Role, role}
             };
             var expires = DateTime.Now.AddDays(Convert.ToDouble(jwtOptions.ExpirationInDays));
 
@@ -137,12 +159,11 @@ namespace Authentication.Controllers
         }
 
         [NonAction]
-        private async Task<IActionResult> Register(User user, string role)
+        private async Task<IActionResult> Register(RegisterUser user, string role)
         {
             if (ModelState.IsValid)
             {
-
-                if (await doesUserExist(user))
+                if (await doesUserExist(user.Email))
                 {
                     return Problem("User already exists", statusCode: 409);
                 }
@@ -166,15 +187,15 @@ namespace Authentication.Controllers
                 var registerState = await manager.CreateAsync(_user, user.Password);
                 if (registerState.Succeeded)
                 {
-                    var token = GenerateJwt(_user);
+                    var token = GenerateJwt(_user, role);
 
                     var kafkaData = new KafkaData(InvocationType.justInvoke, MethodNames.addUser);
-                    kafkaData.AddHeader(WebAPI_Headers.bearerToken, token);
+                    kafkaData.AddHeader(CustomHeader.bearerToken, token);
                     kafkaData.AddHeader(Role.role, role);
 
                     await kafkaProducer.SendData(kafkaData);
 
-                    Response.Headers.Add(WebAPI_Headers.bearerToken, token);
+                    Response.Headers.Add(CustomHeader.bearerToken, token);
                     return Created(string.Empty, string.Empty);
                 }
                 var error = registerState.Errors.FirstOrDefault();
@@ -185,25 +206,17 @@ namespace Authentication.Controllers
         }
 
         [NonAction]
-        private async Task<bool> doesUserExist(User user)
-        {
-
-            var userStatus = await manager.FindByEmailAsync(user.Email);
-            return userStatus != null;
-        }
-
-        [NonAction]
         private async Task<IActionResult?> VerifyAdminRole()
         {
             Microsoft.Extensions.Primitives.StringValues backerToken;
-            var backerResult = Request.Headers.TryGetValue(WebAPI_Headers.backerToken, out backerToken);
+            var backerResult = Request.Headers.TryGetValue(CustomHeader.backerToken, out backerToken);
             if (!backerResult)
             {
-                return Problem($"For registering a user of role {Role.admin}, a valid admin bearer-token is needed in the header {WebAPI_Headers.backerToken}", null, 401);
+                return Problem($"For registering a user of role {Role.admin}, a valid admin bearer-token is needed in the header {CustomHeader.backerToken}", null, 401);
             }
 
             var kafkaData = new KafkaData(InvocationType.invokeAndReturn, MethodNames.verifyAdmin);
-            kafkaData.AddHeader(WebAPI_Headers.backerToken, backerToken);
+            kafkaData.AddHeader(CustomHeader.backerToken, backerToken);
 
             var result = await kafkaProducer.SendAndReceiveData(kafkaData);
             if (result.message.Value == ResultStatus.unavailable)

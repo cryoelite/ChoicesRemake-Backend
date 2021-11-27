@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using StaticAssets;
 using System;
@@ -11,8 +12,9 @@ namespace Authorization.Services
     public class JWTDecryptor
     {
         public JWTSettings jwtOptions;
+        private ILogger<JWTDecryptor> logger;
 
-        public JWTDecryptor(IOptions<JWTSettings> options) => (jwtOptions) = (options.Value);
+        public JWTDecryptor(IOptions<JWTSettings> options, ILogger<JWTDecryptor> logger) => (jwtOptions, this.logger) = (options.Value, logger);
 
         public string? GetUsername(string token)
         {
@@ -31,8 +33,9 @@ namespace Authorization.Services
                 var username = claim.FindFirst(ClaimTypes.Email);
                 return username?.Value;
             }
-            catch
+            catch (Exception e)
             {
+                logger.LogError($"Invalid Jwt with error {e.Message}");
                 return null;
             }
         }

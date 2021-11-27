@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>25f2ea97-1a80-489d-aeb5-6c38a47469fc</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	  <DockerfileRunArguments>--network alphaLayer --rm --ip 172.23.0.36  -p 8009:80 -p 8010:443</DockerfileRunArguments>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KafkaService\KafkaService.csproj" />
+    <ProjectReference Include="..\StaticAssets\StaticAssets.csproj" />
+  </ItemGroup>
+
+</Project>

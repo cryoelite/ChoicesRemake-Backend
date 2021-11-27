@@ -88,7 +88,7 @@ namespace KafkaService.Services
             {
                 GroupId = groupPrimary,
                 BootstrapServers = brokerURL,
-                AutoOffsetReset = AutoOffsetReset.Latest,
+                AutoOffsetReset = AutoOffsetReset.Earliest,
                 ClientId = clientID,
                 EnableAutoCommit = false,
             };
@@ -124,6 +124,10 @@ namespace KafkaService.Services
 
                     await Task.Delay(500, cancellationToken);
                 }
+
+                consumer.Unsubscribe();
+                consumer.Close();
+                consumer.Dispose();
             }
 
             _logger.LogInformation($"{clientID} has stopped KafkaEventHandler");

@@ -5,7 +5,7 @@
 		<UserSecretsId>aspnet-Authentication-D37AFE99-43A5-42B7-B127-C5C9C6940F21</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<Nullable>enable</Nullable>
-		<DockerfileRunArguments>--network alphaLayer --rm</DockerfileRunArguments>
+		<DockerfileRunArguments>--network alphaLayer --rm --ip 172.23.0.38 -p 8007:80 -p 8008:443</DockerfileRunArguments>
 
 	</PropertyGroup>
 

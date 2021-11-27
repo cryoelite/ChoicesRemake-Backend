@@ -18,7 +18,6 @@ namespace Authorization.Services
 
         public Consumer(DbContextOptions<AuthorizationDBContext> options, ILogger<AuthorizationRepo> authLogger, ILogger<Consumer> logger, JWTDecryptor jWTDecryptor)
         {
-
             var adb = new AuthorizationDBContext(options);
             repo = new AuthorizationRepo(adb, authLogger);
             _logger = logger;
@@ -31,11 +30,11 @@ namespace Authorization.Services
             if (_kafkaData.GetMethodName() == MethodNames.addUser)
             {
                 var userRole = new UserRole();
-                var token = _kafkaData.GetCustomHeader(WebAPI_Headers.bearerToken);
+                var token = _kafkaData.GetCustomHeader(CustomHeader.bearerToken);
                 var role = _kafkaData.GetCustomHeader(Role.role);
                 if (token == null || role == null)
                 {
-                    throw new System.Exception($"Kafka Message missing {(token == null ? WebAPI_Headers.bearerToken : Role.role)} header");
+                    throw new System.Exception($"Kafka Message missing {(token == null ? CustomHeader.bearerToken : Role.role)} header");
                 }
 
                 userRole.username = jwtDecryptor.GetUsername(token);

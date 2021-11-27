@@ -16,7 +16,7 @@ namespace Authentication.Settings
 
             operation.Parameters.Add(new OpenApiParameter
             {
-                Name = WebAPI_Headers.backerToken,
+                Name = CustomHeader.backerToken,
                 In = ParameterLocation.Header,
                 Required = false,
             });

@@ -3,35 +3,96 @@ networks:
   default:
     external: true
     name: alphaLayer
-#    driver: bridge
-#    ipam:
-#      config:
-#        - subnet: 172.23.0.0/16
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.23.0.0/16
 #When ready for prod, remove external: true and uncomment driver and ipam sections above. Also uncomment the .net images and give them network.
 services:
-#  product:
-#    build: 
-#      context: ./ChoicesRemake/
-#      dockerfile: "/Products/Dockerfile"
-#    ports:
-#      - "8000:80"
-#      - "8001:443"
-#    depends_on:
-#      - db
-#  auth:
-#    build: 
-#      context: ./ChoicesRemake/
-#      dockerfile: "/Authorization/Dockerfile"
-#    ports:
-#      - "8000:80"
-#      - "8001:443"
-#    depends_on:
-#      - broker
-#      - authorizationdb
+  product:
+    build:
+      context: ./ChoicesRemake/
+      dockerfile: "/Products/Dockerfile"
+    ports:
+      - "8003:80"
+      - "8004:443"
+    networks:
+      default:
+        ipv4_address: 172.23.0.40
+    depends_on:
+      - gateway
+  gateway:
+    build:
+      context: ./ChoicesRemake/
+      dockerfile: "/Gateway/Dockerfile"
+    ports:
+      - "8001:80"
+      - "8002:443"
+    networks:
+      default:
+        ipv4_address: 172.23.0.2
+    depends_on:
+      - broker
+      - authenticationdb
+      - authorizationdb
+      - productsdb
+      - av
+      - zookeeper
+    environment:
+      - ASPNETCORE_URLS=https://0.0.0.0:8002
+      - ASPNETCORE_HTTPS_PORT=8002
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=Kimono2#
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/servercert.pfx
+    volumes:
+      - ./ChoicesRemake/certs:/https:ro
+  authorization:
+    build:
+      context: ./ChoicesRemake/
+      dockerfile: "/Authorization/Dockerfile"
+    ports:
+      - "8005:80"
+      - "8006:443"
+    networks:
+      default:
+        ipv4_address: 172.23.0.39
+    depends_on:
+      - gateway
+  authentication:
+    build:
+      context: ./ChoicesRemake/
+      dockerfile: "/Authentication/Dockerfile"
+    ports:
+      - "8007:80"
+      - "8008:443"
+    networks:
+      default:
+        ipv4_address: 172.23.0.38
+    depends_on:
+      - gateway
+  assetmanager:
+    build:
+      context: ./ChoicesRemake/
+      dockerfile: "/AssetManagement/Dockerfile"
+    ports:
+      - "8009:80"
+      - "8010:443"
+    networks:
+      default:
+        ipv4_address: 172.23.0.36
+    depends_on:
+      - gateway
+  av:
+    #debian: image: mkodockx/docker-clamav
+    image: mkodockx/docker-clamav:alpine
+    container_name: clamav
+    restart: unless-stopped
+    networks:
+      default:
+        ipv4_address: 172.23.0.3
   productsdb:
     user: mssql
-    volumes:
-      - ./ChoicesRemake/ProductsDBLayer/SQLData:/var/opt/mssql/data
+    # volumes:
+    #   - ./ChoicesRemake/ProductsDBLayer/SQLData:/var/opt/mssql/data
     build: "/ChoicesRemake/ProductsDBLayer/"
     ports:
       - "10420:1433"
@@ -41,8 +102,8 @@ services:
         ipv4_address: 172.23.0.50
   authenticationdb:
     user: mssql
-    volumes:
-      - ./ChoicesRemake/AuthenticationIdentityDB/SQLData:/var/opt/mssql/data
+    # volumes:
+    #   - ./ChoicesRemake/AuthenticationIdentityDB/SQLData:/var/opt/mssql/data
     build: "/ChoicesRemake/AuthenticationIdentityDB/"
     ports:
       - "10421:1433"
@@ -52,8 +113,8 @@ services:
         ipv4_address: 172.23.0.51
   authorizationdb:
     user: mssql
-    volumes:
-      - ./ChoicesRemake/AuthorizationDBLayer/SQLData:/var/opt/mssql/data
+    # volumes:
+    #   - ./ChoicesRemake/AuthorizationDBLayer/SQLData:/var/opt/mssql/data
     build: "/ChoicesRemake/AuthorizationDBLayer/"
     ports:
       - "10422:1433"
@@ -130,10 +191,10 @@ services:
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_ENABLE: 'false'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
-    # 
-    #  KAFKA_LISTENERS: LISTENER_BOB://broker:29092,LISTENER_FRED://localhost:9092
-    #  KAFKA_ADVERTISED_LISTENERS: LISTENER_BOB://broker:29092,LISTENER_FRED://localhost:9092
-    #  KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_BOB:PLAINTEXT,LISTENER_FRED:PLAINTEXT
-    #  KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_BOB
+      #
+      #  KAFKA_LISTENERS: LISTENER_BOB://broker:29092,LISTENER_FRED://localhost:9092
+      #  KAFKA_ADVERTISED_LISTENERS: LISTENER_BOB://broker:29092,LISTENER_FRED://localhost:9092
+      #  KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_BOB:PLAINTEXT,LISTENER_FRED:PLAINTEXT
+      #  KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_BOB
       #
 

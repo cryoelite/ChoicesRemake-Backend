@@ -4,7 +4,7 @@
 	  <TargetFramework>net6.0</TargetFramework>
     <UserSecretsId>994714c7-a6e3-4bb4-831d-5903f3cf1eec</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-	<DockerfileRunArguments>--network alphaLayer --rm</DockerfileRunArguments>
+	<DockerfileRunArguments>--network alphaLayer --rm --ip 172.23.0.40 -p 8003:80 -p 8004:443</DockerfileRunArguments>
 	  <Nullable>enable</Nullable>
   </PropertyGroup>
 
@@ -16,11 +16,13 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
+    <PackageReference Include="nClam" Version="6.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\IProductsRepository\IProductsRepository.csproj" />
+    <ProjectReference Include="..\KafkaService\KafkaService.csproj" />
     <ProjectReference Include="..\StaticAssets\StaticAssets.csproj" />
     <ProjectReference Include="..\ProductsDBLayer\ProductsDBLayer.csproj" />
     <ProjectReference Include="..\ProductsModel\ProductsModel.csproj" />

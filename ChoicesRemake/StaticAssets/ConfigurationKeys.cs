@@ -32,6 +32,10 @@
 
         #region kafka
 
+        public const string kafka_assetGroupPrimary = "assetGroup-Primary";
+        public const string kafka_assetGroupSecondary = "assetGroup-Secondary";
+        public const string kafka_assetTopicPrimary = "assetTopic-Primary";
+        public const string kafka_assetTopicSecondary = "assetTopic-Secondary";
         public const string kafka_authGroupPrimary = "authgroup-Primary";
         public const string kafka_authGroupSecondary = "authgroup-Secondary";
         public const string kafka_authTopicPrimary = "authTopic-Primary";
@@ -40,5 +44,19 @@
         public const string kafkaSection = "Kafka";
 
         #endregion kafka
+
+        #region assetManager
+
+        public const string assetManager_Gateway = "GatewayAddress";
+        public const string assetManagerSection = "AssetManager";
+
+        #endregion assetManager
+
+        #region clamAV
+
+        public const string clamAV_Host = "host";
+        public const string clamAV_Section = "ClamAV";
+
+        #endregion clamAV
     }
 }

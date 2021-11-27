@@ -9,6 +9,9 @@ namespace Products
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args).ConfigureHostConfiguration(config =>
             {
+                var provider = config.GetFileProvider();
+                var result = provider.GetDirectoryContents("");
+
                 config.AddJsonFile("ChoicesKMS.json", optional: false);
             })
                 .ConfigureWebHostDefaults(webBuilder =>

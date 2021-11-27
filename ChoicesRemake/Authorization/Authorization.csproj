@@ -5,7 +5,7 @@
     <UserSecretsId>9a18dbab-092b-406e-9dfa-a333382ac5af</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	  <Nullable>enable</Nullable>
-	  <DockerfileRunArguments>--network alphaLayer --rm</DockerfileRunArguments>
+	  <DockerfileRunArguments>--network alphaLayer --rm --ip 172.23.0.39 -p 8005:80 -p 8006:443</DockerfileRunArguments>
 	  <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 

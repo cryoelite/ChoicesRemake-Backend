@@ -34,6 +34,11 @@ namespace KafkaService.Models
             headers.Add(key, convValue);
         }
 
+        public void AddRawHeader(string key, byte[] value)
+        {
+            headers.Add(key, value);
+        }
+
         public Dictionary<string, string> GetAllHeaders()
         {
             var _headers = new Dictionary<string, string>();
@@ -59,6 +64,12 @@ namespace KafkaService.Models
             return convValue;
         }
 
+        public byte[]? GetCustomRawHeader(string key)
+        {
+            var value = headers.GetLastBytes(key);
+            return value;
+        }
+
         public string GetMethodName()
         {
             var uidValue = headers[1].GetValueBytes();
@@ -78,5 +89,10 @@ namespace KafkaService.Models
         public void MarkFailure() => message = new KeyValuePair<string, string>(message.Key, ResultStatus.failure);
 
         public void MarkSuccess() => message = new KeyValuePair<string, string>(message.Key, ResultStatus.success);
+
+        public void RemoveHeader(string key)
+        {
+            headers.Remove(key);
+        }
     }
 }

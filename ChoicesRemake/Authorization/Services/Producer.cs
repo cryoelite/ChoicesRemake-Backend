@@ -5,6 +5,7 @@ using KafkaService.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using StaticAssets;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Authorization.Services
@@ -15,11 +16,10 @@ namespace Authorization.Services
         private readonly ILogger<Producer> _logger;
         private IAuthorizationRepo repo;
 
-        public Producer(DbContextOptions<AuthorizationDBContext> options,ILogger<AuthorizationRepo> authLogger, ILogger<Producer> logger, JWTDecryptor jWTDecryptor)
+        public Producer(DbContextOptions<AuthorizationDBContext> options, ILogger<AuthorizationRepo> authLogger, ILogger<Producer> logger, JWTDecryptor jWTDecryptor)
         {
-
             var adb = new AuthorizationDBContext(options);
-            repo = new AuthorizationRepo(adb,authLogger);
+            repo = new AuthorizationRepo(adb, authLogger);
             _logger = logger;
             this.jwtDecryptor = jWTDecryptor;
         }
@@ -31,7 +31,7 @@ namespace Authorization.Services
 
             if (_kafkaData.GetMethodName() == MethodNames.verifyAdmin)
             {
-                var backerToken = _kafkaData.GetCustomHeader(WebAPI_Headers.backerToken);
+                var backerToken = _kafkaData.GetCustomHeader(CustomHeader.backerToken);
                 if (backerToken != null)
                 {
                     var username = jwtDecryptor.GetUsername(backerToken);
@@ -47,6 +47,21 @@ namespace Authorization.Services
                     }
                 }
             }
+            else if (_kafkaData.GetMethodName() == MethodNames.getRole)
+            {
+                var username = _kafkaData.GetCustomHeader(ClaimTypes.Email);
+                if (username != null)
+                {
+                    var userRole = await repo.getUser(username);
+                    if (userRole != null)
+                    {
+                        _logger.LogInformation($"{username} role found");
+                        _kafkaData.AddHeader(Role.role, userRole);
+                        _kafkaData.MarkSuccess();
+                    }
+                }
+            }
+            _logger.LogInformation($"Returning {_kafkaData.message.Value} from Authorization");
 
             return _kafkaData;
         }
