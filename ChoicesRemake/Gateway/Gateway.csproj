@@ -31,4 +31,8 @@
     <ProjectReference Include="..\StaticAssets\StaticAssets.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
 </Project>

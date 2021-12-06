@@ -13,14 +13,17 @@ services:
     build:
       context: ./ChoicesRemake/
       dockerfile: "/Products/Dockerfile"
-    ports:
-      - "8003:80"
-      - "8004:443"
     networks:
       default:
         ipv4_address: 172.23.0.40
     depends_on:
       - gateway
+    environment:
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=Kimono2#
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    volumes:
+      - ./ChoicesRemake/certs:/https:ro
   gateway:
     build:
       context: ./ChoicesRemake/
@@ -32,55 +35,69 @@ services:
       default:
         ipv4_address: 172.23.0.2
     depends_on:
-      - broker
-      - authenticationdb
-      - authorizationdb
-      - productsdb
-      - av
-      - zookeeper
+     
+      authenticationdb:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+      authorizationdb:
+        condition: service_healthy
+      productsdb:
+        condition: service_healthy
+      av:
+        condition: service_healthy
     environment:
-      - ASPNETCORE_URLS=https://0.0.0.0:8002
+      - ASPNETCORE_URLS=https://+:443;http://+:80
       - ASPNETCORE_HTTPS_PORT=8002
       - ASPNETCORE_Kestrel__Certificates__Default__Password=Kimono2#
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/servercert.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
     volumes:
       - ./ChoicesRemake/certs:/https:ro
   authorization:
     build:
       context: ./ChoicesRemake/
       dockerfile: "/Authorization/Dockerfile"
-    ports:
-      - "8005:80"
-      - "8006:443"
     networks:
       default:
         ipv4_address: 172.23.0.39
     depends_on:
       - gateway
+    environment:
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=Kimono2#
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    volumes:
+      - ./ChoicesRemake/certs:/https:ro
   authentication:
     build:
       context: ./ChoicesRemake/
       dockerfile: "/Authentication/Dockerfile"
-    ports:
-      - "8007:80"
-      - "8008:443"
     networks:
       default:
         ipv4_address: 172.23.0.38
     depends_on:
       - gateway
+    environment:
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=Kimono2#
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    volumes:
+      - ./ChoicesRemake/certs:/https:ro
   assetmanager:
     build:
       context: ./ChoicesRemake/
       dockerfile: "/AssetManagement/Dockerfile"
-    ports:
-      - "8009:80"
-      - "8010:443"
     networks:
       default:
         ipv4_address: 172.23.0.36
     depends_on:
       - gateway
+    environment:
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=Kimono2#
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    volumes:
+      - ./ChoicesRemake/certs:/https:ro
   av:
     #debian: image: mkodockx/docker-clamav
     image: mkodockx/docker-clamav:alpine
@@ -89,6 +106,9 @@ services:
     networks:
       default:
         ipv4_address: 172.23.0.3
+    healthcheck:
+        test: ["CMD-SHELL", "true"]
+        start_period: 30s
   productsdb:
     user: mssql
     # volumes:
@@ -100,6 +120,9 @@ services:
     networks:
       default:
         ipv4_address: 172.23.0.50
+    healthcheck:
+        test: ["CMD-SHELL", "true"]
+        start_period: 120s
   authenticationdb:
     user: mssql
     # volumes:
@@ -111,6 +134,9 @@ services:
     networks:
       default:
         ipv4_address: 172.23.0.51
+    healthcheck:
+        test: ["CMD-SHELL", "true"]
+        start_period: 120s
   authorizationdb:
     user: mssql
     # volumes:
@@ -122,6 +148,9 @@ services:
     networks:
       default:
         ipv4_address: 172.23.0.52
+    healthcheck:
+        test: ["CMD-SHELL", "true"]
+        start_period: 120s
   zookeeper:
     image: confluentinc/cp-zookeeper:6.2.1
     hostname: zookeeper
@@ -169,6 +198,9 @@ services:
     networks:
       default:
         ipv4_address: 172.23.0.55
+    healthcheck:
+        test: ["CMD-SHELL", "true"]
+        start_period: 60s
     mem_limit: 1024M
     mem_reservation: 256M
     cpus: 0.5

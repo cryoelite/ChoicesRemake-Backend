@@ -9,16 +9,16 @@
       "DataEncryptionAlgorithm": "A256CBC-HS512",
       "EncryptionKey": "28472B4B6250655368566D5971337436"
     },
-    "connectionString": "Server=authenticationdb; Database=master;User Id=SA;Password=Uxz5#2@1+7"
+    "connectionString": "Server=172.23.0.51; Database=master;User Id=SA;Password=Uxz5#2@1+7"
   },
   "Products": {
-    "connectionString": "Server=productsdb;Database=master;User Id=SA;Password=Uxz5#2@1+7"
+    "connectionString": "Server=172.23.0.50;Database=master;User Id=SA;Password=Uxz5#2@1+7"
   },
   "Authorization": {
-    "connectionString": "Server=authorizationdb;Database=master;User Id=SA;Password=Uxz5#2@1+7"
+    "connectionString": "Server=172.23.0.52;Database=master;User Id=SA;Password=Uxz5#2@1+7"
   },
   "Kafka": {
-    "broker1": "broker:29092",
+    "broker1": "172.23.0.55:29092",
     "authTopic-Primary": "AuthTopic-Primary",
     "authTopic-Secondary": "AuthTopic-Secondary",
     "authgroup-Primary": "AuthGroupPrimary",
