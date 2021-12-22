@@ -13,7 +13,7 @@ namespace AssetManagement.Services
         {
             _logger = logger;
             this.webHostEnvironment = webHostEnvironment;
-            gatewayURL = configuration.GetSection(ConfigurationKeys.assetManagerSection)[ConfigurationKeys.assetManager_Gateway];
+            gatewayURL = configuration.GetValue<string>(ConfigurationKeys.assetManager_Gateway);
         }
 
         public async Task<KafkaData> ManageMessage(KafkaData _kafkaData)

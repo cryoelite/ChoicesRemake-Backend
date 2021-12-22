@@ -1,18 +1,21 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+
 
 namespace Products
 {
     public class Program
     {
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args).ConfigureHostConfiguration(config =>
+            Host.CreateDefaultBuilder(args).ConfigureLogging(logging =>
             {
-                var provider = config.GetFileProvider();
-                var result = provider.GetDirectoryContents("");
-
-                config.AddJsonFile("ChoicesKMS.json", optional: false);
+                logging.ClearProviders();
+                logging.AddConsole();
+            }).ConfigureHostConfiguration(config =>
+            {
+                config.AddEnvironmentVariables(prefix: "CR_");
             })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

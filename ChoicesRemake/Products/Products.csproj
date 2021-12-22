@@ -4,7 +4,7 @@
 	  <TargetFramework>net6.0</TargetFramework>
     <UserSecretsId>994714c7-a6e3-4bb4-831d-5903f3cf1eec</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-	<DockerfileRunArguments>--network alphaLayer --rm --ip 172.23.0.40 -p 8003:80 -p 8004:443</DockerfileRunArguments>
+	<DockerfileRunArguments>--network alphaLayer --rm -p 8003:80 -p 8004:443</DockerfileRunArguments>
 	  <Nullable>enable</Nullable>
   </PropertyGroup>
 

@@ -37,7 +37,7 @@ namespace Gateway
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Gateway v1"));
             }
 
-            app.UseHttpsRedirection();
+/*            app.UseHttpsRedirection();*/
 
             app.UseRouting();
 
@@ -61,8 +61,17 @@ namespace Gateway
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<JWTSettings>(Configuration.GetSection(ConfigurationKeys.authenticationSection).GetSection(ConfigurationKeys.authentication_jwt));
-            var jwtSettings = Configuration.GetSection(ConfigurationKeys.authenticationSection).GetSection(ConfigurationKeys.authentication_jwt).Get<JWTSettings>();
+            var jwtSettings = new JWTSettings()
+            {
+                DataEncryptionAlgorithm = Configuration.GetValue<string>(ConfigurationKeys.authentication_jwt_DataEncryptionAlgorithm),
+                EncryptionKey= Configuration.GetValue<string>(ConfigurationKeys.authentication_jwt_EncryptionKey),
+                ExpirationInDays= Configuration.GetValue<int>(ConfigurationKeys.authentication_jwt_expiration),
+                Issuer= Configuration.GetValue<string>(ConfigurationKeys.authentication_jwt_issuer),
+                KeyWrapAlgorithm= Configuration.GetValue<string>(ConfigurationKeys.authentication_jwt_KeyWrapAlgorithm),
+                SigningAlgorithm= Configuration.GetValue<string>(ConfigurationKeys.authentication_jwt_SigningAlgorithm),
+                SigningKey= Configuration.GetValue<string>(ConfigurationKeys.authentication_jwt_SigningKey),
+            };
+            services.AddSingleton((_)=>jwtSettings);
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

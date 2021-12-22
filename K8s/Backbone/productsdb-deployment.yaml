@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productsdb-deployment
+spec:
+  selector:
+    matchLabels:
+      app: productsdb-pod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: productsdb-pod
+    spec:
+      containers:
+        - name: productsdb-container
+          image: localhost:5000/productsdb
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 1433

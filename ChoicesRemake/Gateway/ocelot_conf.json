@@ -2,11 +2,11 @@
   "Routes": [
     {
       "DownstreamPathTemplate": "/Products/{anything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.23.0.40",
-          "Port": 443
+          "Host": "product-service",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/api/Products/{anything}",
@@ -19,11 +19,11 @@
     },
     {
       "DownstreamPathTemplate": "/asset/{anything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.23.0.36",
-          "Port": 443
+          "Host": "assetmanager-service",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/api/asset/{anything}",
@@ -32,11 +32,11 @@
     },
     {
       "DownstreamPathTemplate": "/auth/register{type}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.23.0.38",
-          "Port": 443
+          "Host": "authentication-service",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/api/Secure/Register?type={type}",
@@ -45,11 +45,11 @@
     },
     {
       "DownstreamPathTemplate": "/auth/login",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.23.0.38",
-          "Port": 443
+          "Host": "authentication-service",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/api/Secure/Login",
@@ -58,11 +58,11 @@
     },
     {
       "DownstreamPathTemplate": "/auth/verifyToken",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "172.23.0.38",
-          "Port": 443
+          "Host": "authentication-service",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/api/Secure/VerifyToken",
@@ -72,6 +72,6 @@
 
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://172.23.0.2:8002"
+    "BaseUrl": "http://gateway-service:80"
   }
 }

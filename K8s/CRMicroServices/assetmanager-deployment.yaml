@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: assetmanager-deployment
+spec:
+  selector:
+    matchLabels:
+      app: assetmanager-pod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: assetmanager-pod
+    spec:
+      containers:
+        - name: assetmanager-container
+          image: localhost:5000/asset
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: crsecrets

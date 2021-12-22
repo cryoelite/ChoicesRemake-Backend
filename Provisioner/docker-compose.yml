@@ -1,0 +1,145 @@
+version: "3.4"
+
+services:
+  # registry:
+  #   restart: always
+  #   image: registry:2
+  #   ports:
+  #     - 5000:5000
+#  docker run -d -p 5000:5000 --restart=always --name registry registry:2 ,to start it
+# docker container stop registry && docker container rm -v registry ,to stop it
+
+  product:
+    image: localhost:5000/product
+    build:
+      context: ../ChoicesRemake/
+      dockerfile: "./Products/Dockerfile"
+    ports:
+      - "8003:80"
+      - "8004:443"
+
+  gateway:
+    image: localhost:5000/gateway
+    build:
+      context: ../ChoicesRemake/
+      dockerfile: "./Gateway/Dockerfile"
+    ports:
+      - "8001:80"
+      - "8002:443"
+
+  authorization:
+    image: localhost:5000/authorization
+    build:
+      context: ../ChoicesRemake/
+      dockerfile: "./Authorization/Dockerfile"
+    ports:
+      - "8005:80"
+      - "8006:443"
+
+  authentication:
+    image: localhost:5000/authentication
+    build:
+      context: ../ChoicesRemake/
+      dockerfile: "./Authentication/Dockerfile"
+    ports:
+      - "8007:80"
+      - "8008:443"
+
+  assetmanager:
+    image: localhost:5000/asset
+    build:
+      context: ../ChoicesRemake/
+      dockerfile: "./AssetManagement/Dockerfile"
+    ports:
+      - "8009:80"
+      - "8010:443"
+
+  av:
+    image: mkodockx/docker-clamav:alpine
+    restart: always
+    ports:
+      - "8011:80"
+      - "8012:443"
+    healthcheck:
+        test: ["CMD-SHELL", "true"]
+        start_period: 30s
+        
+  productsdb:
+    user: mssql
+    image: localhost:5000/productsdb
+    build: "../ChoicesRemake/ProductsDBLayer/"
+    ports:
+      - "10420:1433"
+    healthcheck:
+        test: ["CMD-SHELL", "true"]
+        start_period: 120s
+
+  authenticationdb:
+    user: mssql
+    image: localhost:5000/authenticationdb
+    build: "../ChoicesRemake/AuthenticationIdentityDB/"
+    ports:
+      - "10421:1433"
+    healthcheck:
+        test: ["CMD-SHELL", "true"]
+        start_period: 120s
+
+  authorizationdb:
+    user: mssql
+    image: localhost:5000/authorizationdb
+    build: "../ChoicesRemake/AuthorizationDBLayer/"
+    ports:
+      - "10422:1433"
+    healthcheck:
+        test: ["CMD-SHELL", "true"]
+        start_period: 120s
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:6.2.1
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      KAFKA_LOG_RETENTION_MS: 60000
+      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 30000
+
+  rest-proxy:
+    image: confluentinc/cp-kafka-rest:6.2.1
+    ports:
+      - "8082:8082"
+    hostname: rest-proxy
+    environment:
+      KAFKA_REST_HOST_NAME: rest-proxy
+      KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:29092'
+      KAFKA_REST_LISTENERS: "http://0.0.0.0:8082"
+
+  broker:
+    image: confluentinc/cp-server:6.2.1
+    hostname: broker
+    ports:
+      - "9092:9092"
+      - "9101:9101"
+      - "29092:29092"
+    healthcheck:
+        test: ["CMD-SHELL", "true"]
+        start_period: 60s
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_HEAP_OPTS: -Xmx1024M -Xms256M
+      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker:29092
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      CONFLUENT_METRICS_ENABLE: 'false'

@@ -39,7 +39,7 @@ namespace Authentication
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Authentication v1"));
             }
 
-            app.UseHttpsRedirection();
+/*            app.UseHttpsRedirection();*/
 
             app.UseRouting();
 
@@ -54,9 +54,19 @@ namespace Authentication
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<JWTSettings>(Configuration.GetSection(ConfigurationKeys.authenticationSection).GetSection(ConfigurationKeys.authentication_jwt));
-            var jwtSettings = Configuration.GetSection(ConfigurationKeys.authenticationSection).GetSection(ConfigurationKeys.authentication_jwt).Get<JWTSettings>();
-            var connStr = Configuration.GetSection(ConfigurationKeys.authenticationSection)[ConfigurationKeys.connectionString];
+            var jwtSettings = new JWTSettings()
+            {
+                DataEncryptionAlgorithm = Configuration.GetValue<string>(ConfigurationKeys.authentication_jwt_DataEncryptionAlgorithm),
+                EncryptionKey = Configuration.GetValue<string>(ConfigurationKeys.authentication_jwt_EncryptionKey),
+                ExpirationInDays = Configuration.GetValue<int>(ConfigurationKeys.authentication_jwt_expiration),
+                Issuer = Configuration.GetValue<string>(ConfigurationKeys.authentication_jwt_issuer),
+                KeyWrapAlgorithm = Configuration.GetValue<string>(ConfigurationKeys.authentication_jwt_KeyWrapAlgorithm),
+                SigningAlgorithm = Configuration.GetValue<string>(ConfigurationKeys.authentication_jwt_SigningAlgorithm),
+                SigningKey = Configuration.GetValue<string>(ConfigurationKeys.authentication_jwt_SigningKey),
+            };
+            services.AddSingleton((_) => jwtSettings);
+
+            var connStr = Configuration.GetValue<string>(ConfigurationKeys.authorization_connectionString);
 
             services.AddDbContext<ApplicationDBContext>(o => o.UseSqlServer(connStr));
 
@@ -101,12 +111,11 @@ namespace Authentication
 
                 c.OperationFilter<SwaggerConfFilter>();
             });
-            var kafkaSection = Configuration.GetSection(ConfigurationKeys.kafkaSection);
-            string brokerURL = kafkaSection[ConfigurationKeys.kafka_broker1];
-            string topicPrimary = kafkaSection[ConfigurationKeys.kafka_authTopicPrimary];
-            string topicSecondary = kafkaSection[ConfigurationKeys.kafka_authTopicSecondary];
-            string groupSecondary = kafkaSection[ConfigurationKeys.kafka_authGroupSecondary];
-            string groupPrimary = kafkaSection[ConfigurationKeys.kafka_authGroupPrimary];
+           string brokerURL = Configuration.GetValue<string>(ConfigurationKeys.kafka_broker1);
+            string topicPrimary = Configuration.GetValue<string>(ConfigurationKeys.kafka_assetTopicPrimary);
+            string topicSecondary = Configuration.GetValue<string>(ConfigurationKeys.kafka_assetTopicSecondary);
+            string groupSecondary = Configuration.GetValue<string>(ConfigurationKeys.kafka_assetGroupSecondary);
+            string groupPrimary = Configuration.GetValue<string>(ConfigurationKeys.kafka_assetGroupPrimary);
 
             services.AddSingleton<KafkaProducer>(sp =>
             {

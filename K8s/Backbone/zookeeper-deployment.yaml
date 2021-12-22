@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zookeeper-deployment
+spec:
+  selector:
+    matchLabels:
+      app: zookeeper-pod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: zookeeper-pod
+    spec:
+      containers:
+        - name: zookeeper-container
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS
+              value: "30000"
+            - name: KAFKA_LOG_RETENTION_MS
+              value: "60000"
+            - name: ZOOKEEPER_CLIENT_PORT
+              value: "2181"
+            - name: ZOOKEEPER_TICK_TIME
+              value: "2000"
+          image: confluentinc/cp-zookeeper:6.2.1
+          ports:
+            - containerPort: 2181

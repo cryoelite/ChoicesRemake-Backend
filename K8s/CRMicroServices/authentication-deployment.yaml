@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentication-deployment
+spec:
+  selector:
+    matchLabels:
+      app: authentication-pod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: authentication-pod
+    spec:
+      containers:
+        - name: authentication-container
+          image: localhost:5000/authentication
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: crsecrets

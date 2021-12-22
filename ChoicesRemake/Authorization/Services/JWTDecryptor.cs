@@ -14,7 +14,7 @@ namespace Authorization.Services
         public JWTSettings jwtOptions;
         private ILogger<JWTDecryptor> logger;
 
-        public JWTDecryptor(IOptions<JWTSettings> options, ILogger<JWTDecryptor> logger) => (jwtOptions, this.logger) = (options.Value, logger);
+        public JWTDecryptor(JWTSettings options, ILogger<JWTDecryptor> logger) => (jwtOptions, this.logger) = (options, logger);
 
         public string? GetUsername(string token)
         {

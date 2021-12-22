@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: cr-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+   - http:
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: gateway-service
+              port:
+                number: 80
+        - path: /asset
+          pathType: Prefix
+          backend:
+            service:
+              name: assetmanager-service
+              port:
+                number: 80

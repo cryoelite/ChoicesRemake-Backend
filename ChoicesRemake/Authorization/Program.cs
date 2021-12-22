@@ -14,7 +14,8 @@ namespace Authorization
                 logging.AddConsole();
             }).ConfigureHostConfiguration(config =>
             {
-                config.AddJsonFile("ChoicesKMS.json", optional: false);
+                config.AddEnvironmentVariables(prefix: "CR_");
+
             })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

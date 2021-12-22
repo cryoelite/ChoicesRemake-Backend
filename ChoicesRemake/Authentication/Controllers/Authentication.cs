@@ -28,8 +28,8 @@ namespace Authentication.Controllers
         private readonly KafkaProducer kafkaProducer;
         private readonly UserManager<ApplicationUser> manager;
 
-        public Authentication(ILogger<Authentication> logger, UserManager<ApplicationUser> userManager, IOptions<JWTSettings> options, KafkaProducer producer)
-            => (_logger, manager, jwtOptions, kafkaProducer) = (logger, userManager, options.Value, producer);
+        public Authentication(ILogger<Authentication> logger, UserManager<ApplicationUser> userManager, JWTSettings options, KafkaProducer producer)
+            => (_logger, manager, jwtOptions, kafkaProducer) = (logger, userManager, options, producer);
 
         [HttpPost("login")]
         public async Task<IActionResult> login([FromBody] LoginUser user)

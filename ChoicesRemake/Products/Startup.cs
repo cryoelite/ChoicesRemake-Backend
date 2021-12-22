@@ -13,6 +13,7 @@ using nClam;
 using ProductsDBLayer;
 using ProductsRepository;
 using StaticAssets;
+using System;
 
 namespace Products
 {
@@ -35,7 +36,7 @@ namespace Products
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Products v1"));
             }
 
-            app.UseHttpsRedirection();
+/*            app.UseHttpsRedirection();*/
 
             app.UseRouting();
 
@@ -50,26 +51,25 @@ namespace Products
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connStr = Configuration.GetSection(ConfigurationKeys.productsSection)[ConfigurationKeys.connectionString];
+            var connStr = Configuration.GetValue<string>(ConfigurationKeys.products_connectionString);
             services.AddDbContext<ProductsDBContext>(o => o.UseSqlServer(connStr));
             services.AddScoped<IProductRepo, ProductRepo>();
-            services.AddControllers(options =>
-            {
-                //options.InputFormatters.Insert(0, new ImageTypeConverter());
-            });
+            services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Products", Version = "v1" });
             });
 
-            var kafkaSection = Configuration.GetSection(ConfigurationKeys.kafkaSection);
-            string brokerURL = kafkaSection[ConfigurationKeys.kafka_broker1];
-            string topicPrimary = kafkaSection[ConfigurationKeys.kafka_assetTopicPrimary];
-            string topicSecondary = kafkaSection[ConfigurationKeys.kafka_assetTopicSecondary];
-            string groupSecondary = kafkaSection[ConfigurationKeys.kafka_assetGroupSecondary];
-            string groupPrimary = kafkaSection[ConfigurationKeys.kafka_assetGroupPrimary];
-            var clamHost = Configuration.GetSection(ConfigurationKeys.clamAV_Section)[ConfigurationKeys.clamAV_Host];
+            string brokerURL = Configuration.GetValue<string>(ConfigurationKeys.kafka_broker1);
+            string topicPrimary = Configuration.GetValue<string>(ConfigurationKeys.kafka_assetTopicPrimary);
+            string topicSecondary = Configuration.GetValue<string>(ConfigurationKeys.kafka_assetTopicSecondary);
+            string groupSecondary = Configuration.GetValue<string>(ConfigurationKeys.kafka_assetGroupSecondary);
+            string groupPrimary = Configuration.GetValue<string>(ConfigurationKeys.kafka_assetGroupPrimary);
+            var clamHost = Configuration.GetValue<string>(ConfigurationKeys.clamAV_Host);
             services.AddSingleton<ClamClient>(new ClamClient(clamHost));
+
+            Console.WriteLine("The kafkaTopic being used is:" + topicPrimary);
+
 
             services.AddSingleton<KafkaProducer>(sp =>
             {

@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authenticationdb-deployment
+spec:
+  selector:
+    matchLabels:
+      app: authenticationdb-pod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: authenticationdb-pod
+    spec:
+      containers:
+        - name: authenticationdb-container
+          image: localhost:5000/authenticationdb
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 1433

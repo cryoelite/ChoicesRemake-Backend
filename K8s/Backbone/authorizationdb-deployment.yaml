@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authorizationdb-deployment
+spec:
+  selector:
+    matchLabels:
+      app: authorizationdb-pod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: authorizationdb-pod
+    spec:
+      containers:
+        - name: authorizationdb-container
+          image: localhost:5000/authorizationdb
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 1433
