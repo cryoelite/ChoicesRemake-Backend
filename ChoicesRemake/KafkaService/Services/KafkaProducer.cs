@@ -62,9 +62,13 @@ namespace KafkaService.Services
 
                 await Task.Delay(4000).ContinueWith(t =>
                 {
+                    _logger.LogInformation("Waited 4000ms, now executing handler.");
+
                     for (var loopCount = 0; loopCount < 6; ++loopCount)
                     {
                         var consumedValue = consumer.Consume(150);
+                        _logger.LogInformation("Kafka Consuming value");
+
                         if (consumedValue != null)
                         {
                             _logger.LogInformation($"Consuming reply in {clientID}");

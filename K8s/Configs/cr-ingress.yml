@@ -14,10 +14,3 @@ spec:
               name: gateway-service
               port:
                 number: 80
-        - path: /asset
-          pathType: Prefix
-          backend:
-            service:
-              name: assetmanager-service
-              port:
-                number: 80

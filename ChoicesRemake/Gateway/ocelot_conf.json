@@ -31,6 +31,19 @@
       "DangerousAcceptAnyServerCertificateValidator": true
     },
     {
+      "DownstreamPathTemplate": "/asset/Images/{folder}/{filename}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "assetmanager-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/asset/Images/{folder}/{filename}",
+      "UpstreamHttpMethod": [ "Get"],
+      "DangerousAcceptAnyServerCertificateValidator": true
+    },
+    {
       "DownstreamPathTemplate": "/auth/register{type}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

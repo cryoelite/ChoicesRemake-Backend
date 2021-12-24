@@ -21,10 +21,8 @@ spec:
               value: broker-service:29092
             - name: CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS
               value: "1"
-            - name: KAFKA_ADVERTISED_HOST_NAME
-              value: 127.0.0.1
             - name: KAFKA_ADVERTISED_LISTENERS
-              value: PLAINTEXT://broker-service:29092,PLAINTEXT_HOST://localhost:9092
+              value: PLAINTEXT://broker-service:29092,PLAINTEXT_HOST://broker-service:9092
             - name: KAFKA_BROKER_ID
               value: "1"
             - name: KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR

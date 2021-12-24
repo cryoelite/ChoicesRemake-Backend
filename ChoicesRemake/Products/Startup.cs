@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using nClam;
+using Products.Services;
 using ProductsDBLayer;
 using ProductsRepository;
 using StaticAssets;
@@ -66,6 +67,8 @@ namespace Products
             string groupSecondary = Configuration.GetValue<string>(ConfigurationKeys.kafka_assetGroupSecondary);
             string groupPrimary = Configuration.GetValue<string>(ConfigurationKeys.kafka_assetGroupPrimary);
             var clamHost = Configuration.GetValue<string>(ConfigurationKeys.clamAV_Host);
+
+            Console.WriteLine("Clam host is: "+ clamHost);
             services.AddSingleton<ClamClient>(new ClamClient(clamHost));
 
             Console.WriteLine("The kafkaTopic being used is:" + topicPrimary);

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using nClam;
+using Products.Services;
 using ProductsModel;
 using StaticAssets;
 using System;
@@ -17,6 +18,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using LocalProduct = Products.Models.Product;
+
 
 namespace Products.Controllers
 {
@@ -93,12 +95,16 @@ namespace Products.Controllers
             return BadRequest("No product with given name found");
         }
 
+
         [Consumes("multipart/form-data")]
         [HttpPost("StoreItem")]
         public async Task<IActionResult> StoreItemData([FromForm] LocalProduct product)
         {
+            logger.LogInformation("StoreItemData called");
             if (ModelState.IsValid)
             {
+                logger.LogInformation("ModelState is Valid!");
+
                 try
                 {
                     var Storeproduct = new Product()
@@ -131,18 +137,26 @@ namespace Products.Controllers
                     {
                         return BadRequest("Please provide all required data.");
                     }
+
                     List<Image> images = await processImages(product.Brand, product.images);
+                    logger.LogInformation("Images Processed");
 
                     Storeproduct.local_images.AddRange(images);
                     if (images.Count() == 0)
                     {
                         return BadRequest("Please provide atleast 1 valid image.");
                     }
+                    logger.LogInformation("Storing Data in repo");
+
                     await productsRepository.storeProduct(Storeproduct);
+                    logger.LogInformation("Data stored in repo sucessfully");
+
                     return Ok();
                 }
                 catch (Exception e)
                 {
+                    logger.LogError($"Error in storing product. The issue is "+ e.Message);
+
                     return Problem(e.Message, statusCode: 500);
                 }
             }
@@ -153,6 +167,8 @@ namespace Products.Controllers
         [NonAction]
         private async Task<List<Image>> processImages(string Brand, List<IFormFile> images)
         {
+            logger.LogInformation("Starting Image Processing");
+
             var imagesConv = new List<Image>();
             foreach (var item in images)
             {
@@ -165,7 +181,11 @@ namespace Products.Controllers
                     {
                         await item.CopyToAsync(stream);
                         var data = stream.ToArray();
+                        logger.LogInformation("Sending clam av the file to be scanned.");
+
                         var scanResult = await clam.SendAndScanFileAsync(data);
+                        logger.LogInformation("File scanned by clamAV");
+
                         if (scanResult != null)
                         {
                             switch (scanResult.Result)
@@ -205,7 +225,8 @@ namespace Products.Controllers
                                     var result = await kafkaProducer.SendAndReceiveData(kafkaData);
                                     if (result.message.Value != ResultStatus.success)
                                     {
-                                        logger.LogError($"Error in storing image");
+                                        logger.LogError($"Error in storing image. The result is: "+ result.message.Value);
+
                                         throw new Exception($"Internal server error in processing the request");
                                     }
                                     var imageLocation = result.GetCustomHeader(CustomHeader.imageLocation);

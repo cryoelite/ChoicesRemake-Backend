@@ -66,7 +66,7 @@ namespace Authentication
             };
             services.AddSingleton((_) => jwtSettings);
 
-            var connStr = Configuration.GetValue<string>(ConfigurationKeys.authorization_connectionString);
+            var connStr = Configuration.GetValue<string>(ConfigurationKeys.authentication_connectionString);
 
             services.AddDbContext<ApplicationDBContext>(o => o.UseSqlServer(connStr));
 

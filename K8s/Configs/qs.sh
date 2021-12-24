@@ -1,7 +1,6 @@
 #!/bin/bash
-kubectl delete --all pods --namespace=default
-kubectl delete --all services --namespace=default
-cd configs
+#kubectl delete --all pods --namespace=default
+#kubectl delete --all services --namespace=default
 kubectl apply -f crsecrets.yml
 kubectl apply -f cringress-controller.yml
 cd ..
@@ -18,7 +17,7 @@ cd CRMicroServices
 kubectl apply -f .
 cd ..
 cd configs
-sleep 120s
+sleep 300s
 kubectl apply -f cr-ingress.yml
 cd ..
 kubectl get pods

@@ -17,6 +17,5 @@ spec:
           image: mkodockx/docker-clamav:alpine
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 80
-            - containerPort: 443
+            - containerPort: 3310
             
