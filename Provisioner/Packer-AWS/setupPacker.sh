@@ -19,7 +19,7 @@ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 wget https://codeload.github.com/cryoelite/ChoicesRemake-Backend/zip/refs/heads/main -O cr.zip
 chmod 0777 cr.zip
 unzip cr.zip
-cd ChoicesRemake-Backend-main/Provisioner/
+cd ChoicesRemake-Backend-main/Provisioner/Packer-AWS/
 sudo sh dockerStart.sh
 
 # Setup sudo to allow no-password sudo for "cryoelite" group and adding millify" user
