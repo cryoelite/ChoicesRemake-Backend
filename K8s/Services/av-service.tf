@@ -1,0 +1,22 @@
+resource "kubernetes_manifest" "service_av_service" {
+  manifest = {
+    "apiVersion" = "v1"
+    "kind" = "Service"
+    "metadata" = {
+      "name" = "av-service"
+    }
+    "spec" = {
+      "ports" = [
+        {
+          "name" = "3310"
+          "port" = 3310
+          "targetPort" = 3310
+        },
+      ]
+      "selector" = {
+        "app" = "av-pod"
+      }
+      "type" = "ClusterIP"
+    }
+  }
+}

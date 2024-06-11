@@ -1,0 +1,21 @@
+resource "kubernetes_manifest" "service_productsdb_service" {
+  manifest = {
+    "apiVersion" = "v1"
+    "kind" = "Service"
+    "metadata" = {
+      "name" = "productsdb-service"
+    }
+    "spec" = {
+      "ports" = [
+        {
+          "port" = 1433
+          "targetPort" = 1433
+        },
+      ]
+      "selector" = {
+        "app" = "productsdb-pod"
+      }
+      "type" = "ClusterIP"
+    }
+  }
+}
